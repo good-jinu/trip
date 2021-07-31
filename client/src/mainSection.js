@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import './mainSection.css';
 
 class mainSection extends React.Component {
   constructor(props) {
@@ -8,7 +9,13 @@ class mainSection extends React.Component {
   render() {
     return (
       <>
-      <h1>This is Section</h1>
+      <article className="first">
+        <div className="recommendation">popular place</div>
+        <ul>
+        <li>seoul</li>
+        <li>busan</li>
+        </ul>
+      </article>
       </>
     );
   }
