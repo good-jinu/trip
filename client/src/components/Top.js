@@ -23,15 +23,18 @@ class Top extends React.Component {
 
     return (
       <>
+      <nav className="head">
       <div className="Top_logo">
         <Link to="/">LOGO</Link>
       </div>
-      <form method="GET">
-        <input type="text" id="search" name="search" required />
-        <input type="submit" />
-      </form>
-      <button>Menu</button>
-      {loginButton}
+      <div className="SearchBox">
+        <input type="text"/>
+        <button>search</button>
+      </div>
+      <div className="MenuBox">
+        <button>Menu</button>
+        {loginButton}
+      </div>
       <div className="modal-container" style={this.state.loginModalStyle}>
         <div className="modal-login">
           <button onClick={()=>this.setState({loginModalStyle:{display: 'none'}})}>X</button>
@@ -40,6 +43,7 @@ class Top extends React.Component {
           <button>Log in</button>
         </div>
       </div>
+      </nav>
       </>
     );
   }
