@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import Top from './Top.js';
-import MainSection from './mainSection.js';
+import Top from './../components/Top.js';
+import MainSection from './../components/mainSection.js';
 
 class App extends React.Component {
   constructor(props) {
