@@ -5,9 +5,22 @@ import './Top.css';
 class Top extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loginModalStyle: {display: 'none'}
+    };
+    this.setLoginState = props.setLoginState;
+    this.getLoginState = props.getLoginState;
   }
 
   render() {
+    const isLoggedIn = this.getLoginState();
+    let loginButton;
+    if(isLoggedIn) {
+      loginButton = <button onClick={() => this.setLoginState(false)}>Log out</button>;
+    } else {
+      loginButton = <button onClick={()=>this.setState({loginModalStyle:{display: 'block'}})}>Log in</button>;
+    }
+
     return (
       <>
       <div className="Top_logo">
@@ -18,7 +31,15 @@ class Top extends React.Component {
         <input type="submit" />
       </form>
       <button>Menu</button>
-      <button>Log in</button>
+      {loginButton}
+      <div className="modal-container" style={this.state.loginModalStyle}>
+        <div className="modal-login">
+          <button onClick={()=>this.setState({loginModalStyle:{display: 'none'}})}>X</button>
+          <input type="text" placeholder="ID"/>
+          <input type="password" placeholder="Password"/>
+          <button>Log in</button>
+        </div>
+      </div>
       </>
     );
   }
