@@ -2,6 +2,9 @@ nav.head {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  background-color: rgba(35, 40, 211, 0.375);
 }
 
 .Top_logo {
@@ -19,7 +22,7 @@ nav.head {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
+  display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;

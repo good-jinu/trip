@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import {Home, ToSeoul} from './SectionPages';
+import './mainSection.css';
 
 const mainSection = () => {
   return (

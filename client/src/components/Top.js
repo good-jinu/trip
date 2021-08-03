@@ -12,13 +12,26 @@ class Top extends React.Component {
     this.getLoginState = props.getLoginState;
   }
 
+  handleModalScreen(opening=false) {
+    const body = document.querySelector("body");
+    const modal = document.querySelector(".modal-container");
+
+    if(opening) {
+      body.style.overflow="hidden";
+      modal.style.display="flex";
+    } else {
+      body.style.overflow="auto";
+      modal.style.display="none";
+    }
+  }
+
   render() {
     const isLoggedIn = this.getLoginState();
     let loginButton;
     if(isLoggedIn) {
       loginButton = <button onClick={() => this.setLoginState(false)}>Log out</button>;
     } else {
-      loginButton = <button onClick={()=>this.setState({loginModalStyle:{display: 'block'}})}>Log in</button>;
+      loginButton = <button onClick={()=>this.handleModalScreen(true)}>Log in</button>;
     }
 
     return (
@@ -35,15 +48,15 @@ class Top extends React.Component {
         <button>Menu</button>
         {loginButton}
       </div>
-      <div className="modal-container" style={this.state.loginModalStyle}>
+      </nav>
+      <div className="modal-container">
         <div className="modal-login">
-          <button onClick={()=>this.setState({loginModalStyle:{display: 'none'}})}>X</button>
+          <button onClick={()=>this.handleModalScreen(false)}>X</button>
           <input type="text" placeholder="ID"/>
           <input type="password" placeholder="Password"/>
           <button>Log in</button>
         </div>
       </div>
-      </nav>
       </>
     );
   }
