@@ -2,19 +2,13 @@ nav.head {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   width: 100%;
-  background-color: rgba(35, 40, 211, 0.375);
-}
-
-.Top_logo {
-  color: #cc2200;
-  font-weight: bold;
-  font-size: 28px;
+  background: linear-gradient(140deg, #fff 35%, #ffc0c0 50%, #c0c0ff 80%);
 }
 
 .SearchBox {
-  flex-basis: 200px;
+  flex-basis: 250px;
 }
 
 .modal-container {
@@ -35,4 +29,33 @@ nav.head {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.modal-login > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media screen and (max-width: 480px) {
+  .Top_logo {
+    width: 120px;
+    height: 40px;
+  }
+
+  .SearchBox {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .Top_logo {
+    width: 240px;
+    height: 75px;
+  }
+
+  .SearchBox {
+    display: block;
+  }
 }

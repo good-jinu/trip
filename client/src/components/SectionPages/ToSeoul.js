@@ -1,5 +1,6 @@
 import React from 'react';
-import './ToSeoul.css';
+import './Home.css';
+import wallpaperImg from './wallpaper/seoul-dest.jpg';
 
 class ToSeoul extends React.Component {
   constructor(props) {
@@ -8,11 +9,15 @@ class ToSeoul extends React.Component {
 
   render() {
     return (
-      <article className="head_of_destArticle">
-        <div className="destination_name">Seoul</div>
-        <button>start</button>
-        <button>end</button>
-        <button>create</button>
+      <article className="first" style={{
+	backgroundImage: `url(${wallpaperImg})`
+      }}>
+        <div className="first_nav">
+          <h1>Seoul</h1>
+          <button>start</button>
+          <button>end</button>
+          <button>create</button>
+        </div>
       </article>
     );
   }
