@@ -4,9 +4,9 @@ import { join } from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import "./auth";
-import indexRouter from "./routes/index";
+import indexRouter from "./routers/index";
 import passport from "passport";
-import userRouter from "./routes/user";
+import userApi from "./routers/userapi";
 
 const app = express();
 
@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, "../client/build")));
 
 app.use("/", indexRouter);
-app.use("/", userRouter);
+app.use("/api", userApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

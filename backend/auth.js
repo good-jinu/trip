@@ -17,7 +17,10 @@ const passportVerify = async (userId, password, done) => {
       done(null, false);
       return;
     }
-    const compareResult = bcrypt.compareSync(password, rows[0].password);
+    const compareResult = bcrypt.compareSync(
+      password,
+      rows[0].password.toString()
+    );
     if (compareResult) {
       done(null, rows[0]);
       return;
