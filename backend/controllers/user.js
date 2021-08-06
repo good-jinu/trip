@@ -11,7 +11,7 @@ export const signin = async (req, res) => {
       if (passportError || !user) {
         res
           .status(400)
-          .json({ message: "ID 또는 Password 정보가 일치하지 않습니다." });
+          .json({ msg: "ID 또는 Password 정보가 일치하지 않습니다." });
         return;
       }
       // user데이터를 통해 로그인 진행
@@ -23,11 +23,11 @@ export const signin = async (req, res) => {
         console.log(user);
         // 클라이언트에게 JWT생성 후 반환
         const token = jwt.sign(
-          { id: user.id, nickname: user.nickname },
+          { id: user.id, name: user.name },
           process.env.JWT_SECRET,
           { expiresIn: "30 min" }
         );
-        res.json({ token });
+        res.json({ msg: "Success", token: token, name: user.name });
       });
     })(req, res);
   } catch (err) {
@@ -38,9 +38,9 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
   try {
-    const { id, password, passwordConfirm, nickname } = req.body;
+    const { id, password, passwordConfirm, name } = req.body;
     //password max length : 72 byte, 현재 핸들링 없음
-    if (!id || !password || !nickname || !passwordConfirm) {
+    if (!id || !password || !name || !passwordConfirm) {
       res.status(400).json({ msg: "Unvalid Arguments" });
       return;
     }
@@ -50,12 +50,11 @@ export const signup = async (req, res) => {
     }
     const encodedPassword = bcrypt.hashSync(password, 10);
     try {
-      const query =
-        "INSERT INTO users (id, password, nickname) VALUES (?, ?, ?);";
+      const query = "INSERT INTO users (id, password, name) VALUES (?, ?, ?);";
       const [ResultSetHeader] = await pool.execute(query, [
         id,
         encodedPassword,
-        nickname,
+        name,
       ]);
       console.log(ResultSetHeader);
     } catch (err) {
@@ -92,15 +91,15 @@ export const checkIdExists = async (req, res) => {
   }
 };
 
-export const checkNicknameExists = async (req, res) => {
+export const checkNameExists = async (req, res) => {
   try {
-    const { nickname } = req.params;
-    if (!nickname) {
+    const { name } = req.params;
+    if (!name) {
       res.status(400).json({ msg: "Unvalid Arguments" });
       return;
     }
-    const query = "SELECT * FROM users WHERE nickname = ?";
-    const [rows] = await pool.execute(query, [nickname]);
+    const query = "SELECT * FROM users WHERE name = ?";
+    const [rows] = await pool.execute(query, [name]);
     if (rows.length === 0) {
       res.status(200).json({ isExist: false });
       return;
@@ -109,6 +108,15 @@ export const checkNicknameExists = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "Internal Server Error" });
+  }
+};
+
+export const isOnline = async (req, res) => {
+  //require use 'auth' middleware
+  if (!req.user) {
+    res.status(200).json({ isOnline: false });
+  } else {
+    res.status(200).json({ isOnline: true });
   }
 };
 
