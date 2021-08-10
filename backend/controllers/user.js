@@ -27,7 +27,7 @@ export const signin = async (req, res) => {
           process.env.JWT_SECRET,
           { expiresIn: "30 min" }
         );
-        res.json({ msg: "Success", token: token, name: user.name });
+        res.status(200).json({ sessionToken: token, name: user.name });
       });
     })(req, res);
   } catch (err) {
@@ -38,14 +38,10 @@ export const signin = async (req, res) => {
 
 export const signup = async (req, res) => {
   try {
-    const { id, password, passwordConfirm, name } = req.body;
+    const { id, password, name } = req.body;
     //password max length : 72 byte, 현재 핸들링 없음
-    if (!id || !password || !name || !passwordConfirm) {
+    if (!id || !password || !name) {
       res.status(400).json({ msg: "Unvalid Arguments" });
-      return;
-    }
-    if (password !== passwordConfirm) {
-      res.status(400).json({ msg: "Unmatch password & passwordConfirm" });
       return;
     }
     const encodedPassword = bcrypt.hashSync(password, 10);
@@ -64,7 +60,7 @@ export const signup = async (req, res) => {
       res.status(400).json({ msg: "Failure" });
       return;
     }
-    res.status(201).json({ msg: "Success" });
+    res.status(201).send();
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "Internal Server Error" });
@@ -116,7 +112,7 @@ export const isOnline = async (req, res) => {
   if (!req.user) {
     res.status(200).json({ isOnline: false });
   } else {
-    res.status(200).json({ isOnline: true });
+    res.status(200).json({ isOnline: true, name: req.user.name });
   }
 };
 

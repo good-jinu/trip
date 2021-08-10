@@ -10,10 +10,10 @@ import {
 
 const userApi = express.Router();
 
-userApi.post("/signin", signin);
-userApi.post("/signup", signup);
+userApi.post("/login_process", signin);
+userApi.post("/signup_process", signup);
 userApi.get("/check-id/:id", checkIdExists);
 userApi.get("/check-name/:name", checkNameExists);
-userApi.get("/isOnline", auth, isOnline);
+userApi.get("/isOnline_process", auth, isOnline);
 
 export default userApi;
