@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { setCookie, getCookie, deleteCookie } from '../jslib/cookieIO';
 import './Top.css';
 import axios from 'axios';
 import logo from './young&chilling-logos_transparent.png'
@@ -41,15 +42,17 @@ class Top extends React.Component {
 	  password: e.target.pw.value
 	}
       ).then((res)=>{
-	if(res.data.success) {
+	if(res.status === 200) {
 	  this.setLoginState(true);
-	  document.cookie='sessionToken='+res.data.sessionToken+';';
+	  setCookie('sessionToken', res.data.sessionToken);
+	  this.handleModalScreen(false);
 	  window.alert('welcome, '+res.data.name);
 	} else {
 	  window.alert('Wrong id or password!');
 	}
       }
       ).catch((e)=>{
+	window.alert('Log in failed!');
 	console.error(e);
       }
       );
@@ -70,12 +73,14 @@ class Top extends React.Component {
 	  name: e.target.username.value
 	}
       ).then((res)=>{
-	if(res.data.success) {
+	if(res.status === 201) {
 	  window.alert('Success!');
+	  this.changeLoginToSignup(false);
 	} else {
 	  window.alert('ID is already existed');
 	}
       }).catch((e)=>{
+	window.alert('Sign up failed!');
 	console.error(e);
       });
     }

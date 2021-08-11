@@ -1,4 +1,6 @@
 import React from 'react';
+import { setCookie, getCookie, deleteCookie } from '../jslib/cookieIO';
+import axios from 'axios';
 import './App.css';
 import Top from './../components/Top.js';
 import MainSection from './../components/mainSection.js';
@@ -20,6 +22,28 @@ class App extends React.Component {
 
   getLoginState() {
     return this.state.isLogin;
+  }
+
+  componentDidMount() {
+    var seToken = getCookie('sessionToken');
+    axios.get('/isOnline_process',
+      {
+	header: {
+	  'Authorization': seToken
+	}
+      })
+    .then((res)=>{
+      if(res.status===200) {
+	this.setLoginState(true);
+      } else {
+	deleteCookie('sessionToken');
+	this.setLoginState(false);
+      }
+    })
+    .catch((e)=> {
+      deleteCookie('sessionToken');
+      this.setLoginState(false);
+    });
   }
 
   render() {
