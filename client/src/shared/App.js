@@ -9,11 +9,13 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLogin: false
+      isLogin: false,
+      isAdmin: false
     };
 
     this.setLoginState = this.setLoginState.bind(this);
     this.getLoginState = this.getLoginState.bind(this);
+    this.isOnline = this.isOnline.bind(this);
   }
 
   setLoginState(login_succeed = false) {
@@ -24,7 +26,7 @@ class App extends React.Component {
     return this.state.isLogin;
   }
 
-  componentDidMount() {
+  isOnline() {
     var seToken = getCookie('sessionToken');
     axios.get('/isOnline_process',
       {
@@ -33,11 +35,13 @@ class App extends React.Component {
 	}
       })
     .then((res)=>{
-      if(res.status===200) {
-	this.setLoginState(true);
+      if(res.data.isOnline) {
+        this.setLoginState(true);
+        if(res.data.authority_level>1) {
+          this.setState({isAdmin: true});
+        }
       } else {
-	deleteCookie('sessionToken');
-	this.setLoginState(false);
+        deleteCookie('sessionToken');
       }
     })
     .catch((e)=> {
@@ -46,11 +50,15 @@ class App extends React.Component {
     });
   }
 
+  componentDidMount() {
+    this.isOnline();
+  }
+
   render() {
     return (
       <>
       <header>
-        <Top setLoginState={this.setLoginState} getLoginState={this.getLoginState}/>
+        <Top setLoginState={this.setLoginState} getLoginState={this.getLoginState} isAdmin={this.state.isAdmin} isOnline={this.isOnline}/>
       </header>
       <section>
         <MainSection />

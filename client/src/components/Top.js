@@ -9,13 +9,16 @@ class Top extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginToSignup: false
+      loginToSignup: false,
+      isAdmin: props.isAdmin
     };
     this.setLoginState = props.setLoginState;
     this.getLoginState = props.getLoginState;
+    this.isOnline = props.isOnline;
     this.changeLoginToSignup = this.changeLoginToSignup.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleSignup = this.handleSignup.bind(this);
+    this.innerMenuBox = this.innerMenuBox.bind(this);
   }
 
   handleModalScreen(opening=false) {
@@ -47,6 +50,7 @@ class Top extends React.Component {
 	  setCookie('sessionToken', res.data.sessionToken);
 	  this.handleModalScreen(false);
 	  window.alert('welcome, '+res.data.name);
+    this.isOnline();
 	} else {
 	  window.alert('Wrong id or password!');
 	}
@@ -116,15 +120,32 @@ class Top extends React.Component {
     }
   }
 
-  render() {
-    const isLoggedIn = this.getLoginState();
-    const modalLogin = this.changeLoginToSignup(this.state.loginToSignup);
-    let loginButton;
-    if(isLoggedIn) {
-      loginButton = <button onClick={() => this.setLoginState(false)}>Log out</button>;
-    } else {
-      loginButton = <button onClick={()=>{this.handleModalScreen(true);this.setState({loginToSignup: false});}}>Log in</button>;
+  innerMenuBox() {
+    var adminResult=null;
+    if(this.state.isAdmin) {
+      adminResult = <Link to="/edit"><button>upload contents</button><Link>;
     }
+    var resultJSX;
+    if(this.getLoginState()) {
+      resultJSX = (
+        <div className="MenuBox">
+          {adminResult}
+          <button onClick={() => this.setLoginState(false)}>Log out</button>
+        </div>
+      );
+    } else {
+      resultJSX = (
+        <div className="MenuBox">
+          <button onClick={()=>{this.handleModalScreen(true);this.setState({loginToSignup: false});}}>Log in</button>
+        </div>
+      );
+    }
+
+    return resultJSX;
+  }
+
+  render() {
+    const modalLogin = this.changeLoginToSignup(this.state.loginToSignup);
 
     return (
       <>
@@ -134,10 +155,7 @@ class Top extends React.Component {
           <input type="text"/>
           <button>search</button>
         </div>
-        <div className="MenuBox">
-          <button>Menu</button>
-          {loginButton}
-        </div>
+        {this.innerMenuBox}
       </nav>
       <div className="modal-container">
         <div className="modal-login">
