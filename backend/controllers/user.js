@@ -23,7 +23,11 @@ export const signin = async (req, res) => {
         console.log(user);
         // 클라이언트에게 JWT생성 후 반환
         const token = jwt.sign(
-          { id: user.id, name: user.name },
+          {
+            id: user.id,
+            name: user.name,
+            authority_level: user.authority_level,
+          },
           process.env.JWT_SECRET,
           { expiresIn: "30 min" }
         );
@@ -112,7 +116,11 @@ export const isOnline = async (req, res) => {
   if (!req.user) {
     res.status(200).json({ isOnline: false });
   } else {
-    res.status(200).json({ isOnline: true, name: req.user.name });
+    res.status(200).json({
+      isOnline: true,
+      name: req.user.name,
+      authority_level: req.user.authority_level,
+    });
   }
 };
 
