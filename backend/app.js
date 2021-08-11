@@ -6,21 +6,23 @@ import logger from "morgan";
 import "./auth";
 import indexRouter from "./routers/index";
 import passport from "passport";
-import userApi from "./routers/userapi";
+import userApi from "./routers/userApi";
+import placeApi from "./routers/placeApi";
+import { imageStorePath, imageRoutingPath } from "./controllers/image";
 
 const app = express();
 
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/", express.static(join(__dirname, "../client/build")));
-app.use("/img", express.static(join(__dirname, "../image")));
+app.use(imageRoutingPath, express.static(imageStorePath));
 
 app.use("/", indexRouter);
 app.use("/", userApi);
+app.use("/placeinfo", placeApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -28,6 +30,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
+// eslint-disable-next-line no-unused-vars
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

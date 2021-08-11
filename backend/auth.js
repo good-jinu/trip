@@ -11,6 +11,7 @@ const passportConfig = {
 
 const passportVerify = async (userId, password, done) => {
   try {
+    console.log(`try login : ${userId} : ${password}`);
     const query = "SELECT * FROM users WHERE id = ?";
     const [rows] = await pool.execute(query, [userId]);
     if (rows.length === 0) {
@@ -33,12 +34,12 @@ const passportVerify = async (userId, password, done) => {
 };
 
 const JWTConfig = {
-  jwtFromRequest: ExtractJwt.fromHeader("Authorization"),
+  jwtFromRequest: ExtractJwt.fromHeader("authorization"),
   secretOrKey: process.env.JWT_SECRET,
 };
 const JWTVerify = async (jwtPayload, done) => {
   try {
-    const query = "SELECT * FROM users WHERE id = ?";
+    const query = "SELECT * FROM users WHERE user_id = ?";
     const [rows] = await pool.execute(query, [jwtPayload.id]);
     if (rows.length === 0) {
       done(null, false);
@@ -64,10 +65,16 @@ export const auth = async (req, res, next) => {
   })(req, res, next);
 };
 
-export const checkAuth = async (req, res, next) => {
-  if (!req.user) {
-    res.status(400).json({ msg: "Permission denied" });
-  } else {
-    next();
-  }
+export const checkAuth = (requireLevel) => {
+  return async (req, res, next) => {
+    if (req.user) {
+      if (req.user.authority_level >= requireLevel) {
+        next();
+      } else {
+        res.status(403).send();
+      }
+    } else {
+      res.status(401).send();
+    }
+  };
 };

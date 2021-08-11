@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 export const signin = async (req, res) => {
   try {
     // 아까 local로 등록한 인증과정 실행
+    // eslint-disable-next-line no-unused-vars
     passport.authenticate("local", (passportError, user, info) => {
       // 인증이 실패했거나 유저 데이터가 없다면 에러 발생
       if (passportError || !user) {
@@ -20,17 +21,10 @@ export const signin = async (req, res) => {
           res.send(loginError);
           return;
         }
-        console.log(user);
         // 클라이언트에게 JWT생성 후 반환
-        const token = jwt.sign(
-          {
-            id: user.id,
-            name: user.name,
-            authority_level: user.authority_level,
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: "30 min" }
-        );
+        const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
+          expiresIn: "30m",
+        });
         res.status(200).json({ sessionToken: token, name: user.name });
       });
     })(req, res);
