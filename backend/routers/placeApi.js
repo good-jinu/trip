@@ -5,7 +5,7 @@ import {
   deletePlace,
   getPlace,
   postPlace,
-  putPlace,
+  patchPlace,
 } from "../controllers/place";
 
 const placeApi = express.Router();
@@ -19,7 +19,7 @@ placeApi.get("/:place", getPlace);
 //auth : required(level 1)
 placeApi.use("/", checkAuth(1));
 placeApi.post("/", imageUploader.single("image"), postPlace);
-placeApi.put("/:place", putPlace);
+placeApi.patch("/:place", imageUploader.single("image"), patchPlace);
 placeApi.delete("/:place", deletePlace);
 
 export default placeApi;

@@ -53,8 +53,7 @@ export const signup = async (req, res) => {
       console.log(ResultSetHeader);
     } catch (err) {
       //failure case
-      //id 또는 nickname이 중복(unique 속성)
-      //각 인자들의 max length 초과
+      //db datatype이랑 입력값 미일치
       res.status(400).json({ msg: "Failure" });
       return;
     }

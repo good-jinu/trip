@@ -33,7 +33,7 @@ export const postPlace = async (req, res) => {
     if (!description) {
       description = "";
     }
-    const filename = req.file ? req.file.filename : defaultImageName;
+    const filename = req.file ? req.file.filename : null;
     try {
       const query =
         "INSERT INTO places (name, description, imageSrc) VALUES (?, ?, ?);";
@@ -45,7 +45,7 @@ export const postPlace = async (req, res) => {
       console.log(ResultSetHeader);
     } catch (err) {
       //failure case
-      //name 중복
+      //db datatype이랑 입력값 미일치
       res.status(400).json({ msg: "Failure" });
       removeImage(req.file);
       return;
@@ -58,12 +58,51 @@ export const postPlace = async (req, res) => {
   }
 };
 
-export const putPlace = async (req, res) => {
+export const patchPlace = async (req, res) => {
   try {
-
+    const { place } = req.params;
+    const selectQuery = "SELECT * FROM places WHERE name = ?;";
+    const updateQuery = "UPDATE places SET name = ?, description = ?, imageSrc = ? WHERE place_id = ?;";
+    var connection = await pool.getConnection();
+    let [rows] = await connection.execute(selectQuery, [place]);
+    if (rows.length === 0) {
+      res.status(404).json({ msg: "place NOT FOUND" });
+      removeImage(req.file);
+      return;
+    }
+    const oldImageSrc = rows[0].imageSrc;
+    const name = req.body.name ? req.body.name : rows[0].name;
+    const description = req.body.description
+      ? req.body.description
+      : rows[0].description;
+    const imageSrc = req.file ? req.file.filename : oldImageSrc;
+    try {
+      const [ResultSetHeader] = await connection.execute(updateQuery, [
+        name,
+        description,
+        imageSrc,
+        rows[0].place_id,
+      ]);
+      console.log(ResultSetHeader);
+    } catch (err) {
+      //failure case
+      //db datatype이랑 입력값 미일치
+      res.status(400).json({ msg: "Failure" });
+      removeImage(req.file);
+      return;
+    }
+    res.status(200).send();
+    if (oldImageSrc !== imageSrc) {
+      removeImage(oldImageSrc);
+    }
   } catch (err) {
     console.log(err);
     res.status(500).json({ msg: "Internal Server Error" });
+    removeImage(req.file);
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
 };
 
@@ -78,9 +117,7 @@ export const deletePlace = async (req, res) => {
       res.status(404).json({ msg: "place NOT FOUND" });
       return;
     }
-    if (rows[0].imageSrc !== defaultImageName) {
-      removeImage(rows[0].imageSrc);
-    }
+    removeImage(rows[0].imageSrc);
     try {
       const [ResultSetHeader] = await connection.execute(deleteQuery, [
         rows[0].place_id,
@@ -96,7 +133,6 @@ export const deletePlace = async (req, res) => {
     console.log(err);
     res.status(500).json({ msg: "Internal Server Error" });
   } finally {
-    console.log("deleteplace finally");
     if (connection) {
       connection.release();
     }

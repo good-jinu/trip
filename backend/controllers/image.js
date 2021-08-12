@@ -35,6 +35,7 @@ export const removeImage = (file) => {
   try {
     if (!file) return;
     var filename = typeof file === "string" ? file : file.filename;
+    if (filename === defaultImageName) return;
     const target = join(imageStorePath, filename);
     fs.unlinkSync(target);
     console.log(`Success to removeFile : ${filename}`);
