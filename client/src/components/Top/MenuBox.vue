@@ -84,7 +84,6 @@ export default {
 				})
 				.then((res) => {
 					if(res.status === 200) {
-						console.log(res.data);
 						this.$store.dispatch('setUser', {
 							isLogin: true,
 							isAdmin: res.data.authority_level>1,
