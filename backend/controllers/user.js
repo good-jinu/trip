@@ -1,7 +1,37 @@
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import pool from "../db";
 import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
+import { pool, checkTokens } from "../db";
+
+const createTokens = async (user, conn) => {
+  try {
+    const tid = nanoid();
+    //exp : 1 hour
+    const jwt_exp = Math.floor(Date.now() / 1000) + 60 * 60;
+    const db_exp = new Date(jwt_exp * 1000)
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    const query = "INSERT INTO tokens (tid, user_id, exp) VALUES (?, ?, ?);";
+    await conn.execute(query, [tid, user.user_id, db_exp]);
+
+    const accessToken = jwt.sign(
+      { id: user.id, name: user.name, al: user.authority_level },
+      process.env.JWT_SECRET,
+      { expiresIn: "10m" }
+    );
+    const refreshToken = jwt.sign(
+      { tid: tid, exp: jwt_exp },
+      process.env.JWT_SECRET
+    );
+    return { accessToken: accessToken, refreshToken: refreshToken };
+  } catch (err) {
+    console.log("Warnning : Failed to createToken");
+    checkTokens();
+    throw err;
+  }
+};
 
 export const signin = async (req, res) => {
   try {
@@ -15,17 +45,13 @@ export const signin = async (req, res) => {
           .json({ msg: "ID 또는 Password 정보가 일치하지 않습니다." });
         return;
       }
-      // user데이터를 통해 로그인 진행
-      req.login(user, { session: false }, (loginError) => {
+      req.login(user, { session: false }, async (loginError) => {
         if (loginError) {
           res.send(loginError);
           return;
         }
-        // 클라이언트에게 JWT생성 후 반환
-        const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, {
-          expiresIn: "30m",
-        });
-        res.status(200).json({ sessionToken: token, name: user.name });
+        const tokens = await createTokens(user, user.conn);
+        res.status(200).json(tokens);
       });
     })(req, res);
   } catch (err) {
@@ -50,7 +76,6 @@ export const signup = async (req, res) => {
         encodedPassword,
         name,
       ]);
-      console.log(ResultSetHeader);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -104,16 +129,63 @@ export const checkNameExists = async (req, res) => {
   }
 };
 
-export const isOnline = async (req, res) => {
-  //require use 'auth' middleware
-  if (!req.user) {
-    res.status(200).json({ isOnline: false });
-  } else {
-    res.status(200).json({
-      isOnline: true,
-      name: req.user.name,
-      authority_level: req.user.authority_level,
-    });
+export const refresh = async (req, res) => {
+  const { accessToken, refreshToken } = req.body;
+  if (!accessToken || !refreshToken) {
+    res.status(400).send();
+    return;
+  }
+  try {
+    const accessPayload = jwt.decode(accessToken);
+    const refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    var connection = await pool.getConnection();
+    const selectQuery =
+      "SELECT u.*, t.valid valid FROM users u JOIN tokens t ON (u.user_id = t.user_id AND u.id = ?) WHERE t.tid = ?;";
+    const validCaseQuery = "UPDATE tokens SET valid = 0 WHERE (tid = ?);";
+    const unvalidCaseQuery = "DELETE FROM tokens WHERE (user_id = ?);";
+    const [rows] = await connection.execute(selectQuery, [
+      accessPayload.id,
+      refreshPayload.tid,
+    ]);
+    const user = rows[0];
+    if (user.valid) {
+      await connection.execute(validCaseQuery, [refreshPayload.tid]);
+      const tokens = await createTokens(user, connection);
+      res.status(200).json(tokens);
+    } else {
+      await connection.execute(unvalidCaseQuery, [user.user_id]);
+      console.log(`Reuse refreshToken : Forced logout id = ${user.id}`);
+      res.status(401).send();
+    }
+  } catch (err) {
+    res.status(401).send();
+    return;
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+};
+
+//Just do expires refreshToken
+export const logout = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) {
+    res.status(400).send();
+    return;
+  }
+  try {
+    const refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const query = "UPDATE tokens SET valid = 0 WHERE tid = ? AND valid = 1;";
+    const [ResultSetHeader] = await pool.execute(query, [refreshPayload.tid]);
+    if (ResultSetHeader.affectedRows) {
+      res.status(200).send();
+    } else {
+      res.status(401).send();
+    }
+  } catch (err) {
+    res.status(401).send();
+    return;
   }
 };
 
@@ -121,6 +193,6 @@ export const isOnline = async (req, res) => {
 
 // };
 
-// export const deleteUserInfo = async (req, res) => {
+// export const deleteUser = async (req, res) => {
 
 // };

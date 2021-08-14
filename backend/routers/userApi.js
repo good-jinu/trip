@@ -1,11 +1,12 @@
 import express from "express";
-import { auth } from "../auth";
+import { auth, checkAuth } from "../auth";
 import {
   signin,
   signup,
   checkIdExists,
   checkNameExists,
-  isOnline,
+  refresh,
+  logout,
 } from "../controllers/user";
 
 const userApi = express.Router();
@@ -14,6 +15,7 @@ userApi.post("/login_process", signin);
 userApi.post("/signup_process", signup);
 userApi.get("/check-id/:id", checkIdExists);
 userApi.get("/check-name/:name", checkNameExists);
-userApi.get("/isOnline_process", auth, isOnline);
+userApi.post("/refresh", refresh);
+userApi.post("/logout", logout);
 
 export default userApi;
