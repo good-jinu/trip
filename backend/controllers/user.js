@@ -71,11 +71,7 @@ export const signup = async (req, res) => {
     const encodedPassword = bcrypt.hashSync(password, 10);
     try {
       const query = "INSERT INTO users (id, password, name) VALUES (?, ?, ?);";
-      const [ResultSetHeader] = await pool.execute(query, [
-        id,
-        encodedPassword,
-        name,
-      ]);
+      await pool.execute(query, [id, encodedPassword, name]);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -130,24 +126,29 @@ export const checkNameExists = async (req, res) => {
 };
 
 export const refresh = async (req, res) => {
-  const { accessToken, refreshToken } = req.body;
-  if (!accessToken || !refreshToken) {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      res.status(400).send();
+      return;
+    }
+    var refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  } catch (err) {
     res.status(400).send();
     return;
   }
   try {
-    const accessPayload = jwt.decode(accessToken);
-    const refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
     var connection = await pool.getConnection();
     const selectQuery =
-      "SELECT u.*, t.valid valid FROM users u JOIN tokens t ON (u.user_id = t.user_id AND u.id = ?) WHERE t.tid = ?;";
+      "SELECT u.*, t.valid valid FROM users u JOIN tokens t ON (t.tid = ? AND u.user_id = t.user_id);";
     const validCaseQuery = "UPDATE tokens SET valid = 0 WHERE (tid = ?);";
     const unvalidCaseQuery = "DELETE FROM tokens WHERE (user_id = ?);";
-    const [rows] = await connection.execute(selectQuery, [
-      accessPayload.id,
-      refreshPayload.tid,
-    ]);
+    const [rows] = await connection.execute(selectQuery, [refreshPayload.tid]);
     const user = rows[0];
+    if (!user) {
+      res.status(401).send();
+      return;
+    }
     if (user.valid) {
       await connection.execute(validCaseQuery, [refreshPayload.tid]);
       const tokens = await createTokens(user, connection);
@@ -158,8 +159,8 @@ export const refresh = async (req, res) => {
       res.status(401).send();
     }
   } catch (err) {
-    res.status(401).send();
-    return;
+    console.log(err);
+    res.status(500).json({ msg: "Internal Server Error" });
   } finally {
     if (connection) {
       connection.release();
@@ -167,16 +168,24 @@ export const refresh = async (req, res) => {
   }
 };
 
-//Just do expires refreshToken
 export const logout = async (req, res) => {
-  const { refreshToken } = req.body;
-  if (!refreshToken) {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      res.status(400).send();
+      return;
+    }
+    var refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+  } catch (err) {
     res.status(400).send();
     return;
   }
   try {
-    const refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
-    const query = "UPDATE tokens SET valid = 0 WHERE tid = ? AND valid = 1;";
+    //아래 쿼리 : 토큰을 블랙리스트에 등록
+    //const query = "UPDATE tokens SET valid = 0 WHERE tid = ? AND valid = 1;";
+    //아래 쿼리 : 토큰을 관리리스트에서 삭제
+    const query = "DELETE FROM tokens WHERE tid = ? AND valid = 1;";
+
     const [ResultSetHeader] = await pool.execute(query, [refreshPayload.tid]);
     if (ResultSetHeader.affectedRows) {
       res.status(200).send();
@@ -184,8 +193,8 @@ export const logout = async (req, res) => {
       res.status(401).send();
     }
   } catch (err) {
-    res.status(401).send();
-    return;
+    console.log(err);
+    res.status(500).json({ msg: "Internal Server Error" });
   }
 };
 
