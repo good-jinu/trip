@@ -128,13 +128,9 @@ export const checkNameExists = async (req, res) => {
 export const refresh = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) {
-      res.status(400).send();
-      return;
-    }
     var refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
   } catch (err) {
-    res.status(400).send();
+    res.status(401).send();
     return;
   }
   try {
@@ -146,7 +142,7 @@ export const refresh = async (req, res) => {
     const [rows] = await connection.execute(selectQuery, [refreshPayload.tid]);
     const user = rows[0];
     if (!user) {
-      res.status(401).send();
+      res.status(403).send();
       return;
     }
     if (user.valid) {
@@ -156,7 +152,7 @@ export const refresh = async (req, res) => {
     } else {
       await connection.execute(unvalidCaseQuery, [user.user_id]);
       console.log(`Reuse refreshToken : Forced logout id = ${user.id}`);
-      res.status(401).send();
+      res.status(403).send();
     }
   } catch (err) {
     console.log(err);
@@ -171,13 +167,9 @@ export const refresh = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) {
-      res.status(400).send();
-      return;
-    }
     var refreshPayload = jwt.verify(refreshToken, process.env.JWT_SECRET);
   } catch (err) {
-    res.status(400).send();
+    res.status(401).send();
     return;
   }
   try {
@@ -190,7 +182,7 @@ export const logout = async (req, res) => {
     if (ResultSetHeader.affectedRows) {
       res.status(200).send();
     } else {
-      res.status(401).send();
+      res.status(403).send();
     }
   } catch (err) {
     console.log(err);
