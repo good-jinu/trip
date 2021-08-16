@@ -1,7 +1,13 @@
 <template>
   <div>
-      <header>헤더 암튼 헤더</header>
       <div class="main">
+          <!-- <div v-for="item in this.$store.state.place" :key="item">
+              <div>
+                    <router-link v-bind:to="`/to/${item.name}`">
+                        {{ item.name }}
+                    </router-link>
+              </div>
+          </div> -->
           <div class="recommendBtn">
               <button>서울</button>
               <button>제주</button>
@@ -17,17 +23,13 @@
 
 <script>
 export default {
-    
+    created() {
+        this.$store.dispatch('FETCH_PLACE');
+    },
 }
 </script>
 
 <style>
-header {
-    height: 30px;
-    color: white;
-    background-color: black;
-}
-
 .main {
     /* width: 100vw; */
     /* min-height: 100%; */
