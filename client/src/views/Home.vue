@@ -1,18 +1,12 @@
 <template>
-  <div>
+  <div class="full">
       <div class="main">
-          <!-- <div v-for="item in this.$store.state.place" :key="item">
-              <div>
-                    <router-link v-bind:to="`/to/${item.name}`">
-                        {{ item.name }}
-                    </router-link>
-              </div>
-          </div> -->
-          <div class="recommendBtn">
-              <button>서울</button>
-              <button>제주</button>
-              <button>부산</button>
-              <button>강릉</button>
+          <div div class="recommendBtn"
+          v-for="item in this.$store.state.places"
+          :key="item.place_id">
+                <router-link v-bind:to="`/to/${item.name}`" tag="button" >
+                    {{ item.name }}
+                </router-link>
           </div>
       </div>
       <div>
@@ -24,15 +18,20 @@
 <script>
 export default {
     created() {
-        this.$store.dispatch('FETCH_PLACE');
+        this.$store.dispatch('FETCH_PLACES');
     },
 }
 </script>
 
 <style>
+html,
+body,
+div {
+    width: 100%;
+    height: 100%;
+}
 .main {
-    /* width: 100vw; */
-    /* min-height: 100%; */
+    width: 100%;
     background-size: cover;
     background-image: url(./images/korea-main.jpg);
     background-position: center center;
@@ -43,6 +42,10 @@ export default {
     display: block;
     padding-top: 100%; 
 } */
+
+.recommendBtn {
+    display: inline;
+}
 
 .recommendBtn button {
     font-size: 25px;
