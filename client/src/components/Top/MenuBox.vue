@@ -3,6 +3,7 @@
 		<router-link to="/edit" v-if="this.$store.getters.getUserInfo.isAdmin">
 			<button>Edit</button>
 		</router-link>
+		<span>{{this.$store.getters.getUserInfo.name}}</span>
 		<button @click="handleLogout">Log out</button>
 	</div>
 	<div class="menubox" v-else>
@@ -33,8 +34,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { setCookie, deleteCookie } from '@/jslib/cookieIO';
+import { deleteCookie } from '@/jslib/cookieIO';
+import { signupProcess, loginProcess, logoutProcess } from '@/jslib/loginManager';
 
 export default {
 	data() {
@@ -52,23 +53,14 @@ export default {
 			} else if(event.target.pw.value !== event.target.repw.value) {
 				window.alert('Password is not corresponding with repeated one');
 			} else {
-				axios.post('/signup_process',
-				{
-					id: event.target.id.value,
-					password: event.target.pw.value,
-					name: event.target.username.value
-				})
-				.then((res) => {
-					if(res.status === 201) {
-						window.alert('Success!');
+				signupProcess(event.target.id.value, event.target.pw.value, event.target.username.value)
+				.then((val)=> {
+					if(val) {
 						this.LoginToSignup=false;
+						window.alert("Success!");
 					} else {
-						window.alert('ID or name is already existed');
+						window.alert("Signup failed!");
 					}
-				})
-				.catch((err) => {
-					window.alert('Sign up failed!');
-					console.error(err);
 				});
 			}
 		},
@@ -77,28 +69,15 @@ export default {
 			if(event.target.id.value.length<4 || event.target.pw.value.length<4) {
 				window.alert('id and password length should be more than 4');
 			} else {
-				axios.post('/login_process',
-				{
-					id: event.target.id.value,
-					password: event.target.pw.value
-				})
-				.then((res) => {
-					if(res.status === 200) {
-						this.$store.dispatch('setUser', {
-							isLogin: true,
-							isAdmin: res.data.authority_level>1,
-							name: res.data.name
-						});
-						setCookie("sessionToken", res.data.sessionToken);
-						window.alert('welcom, '+res.data.name);
-						this.turnOnModal = false;
+				loginProcess(event.target.id.value, event.target.pw.value)
+				.then((val)=>{
+					if(val) {
+						this.turnOnModal=false;
+						window.alert('Log in succeeded');
+						this.$store.dispatch('setUser',val);
 					} else {
-						window.alert('Wrong id or password!');
+						window.alert('Log in failed');
 					}
-				})
-				.catch((err) => {
-					window.alert('Login failed!');
-					console.error(err);
 				});
 			}
 		},
@@ -108,7 +87,7 @@ export default {
 				isAdmin: false,
 				name: ''
 			});
-			deleteCookie("sessionToken");
+			logoutProcess();
 		}
 	}
 };
