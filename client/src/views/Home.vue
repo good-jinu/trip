@@ -1,18 +1,13 @@
 <template>
-  <div>
-      <div class="main">
-          <!-- <div v-for="item in this.$store.state.place" :key="item">
-              <div>
-                    <router-link v-bind:to="`/to/${item.name}`">
-                        {{ item.name }}
-                    </router-link>
-              </div>
-          </div> -->
-          <div class="recommendBtn">
-              <button>서울</button>
-              <button>제주</button>
-              <button>부산</button>
-              <button>강릉</button>
+  <div class="full">
+      <img class="image" src="./images/korea-main.jpg" alt="">
+      <div class="homeMain">
+          <div div class="recommendBtn"
+          v-for="item in this.$store.state.places"
+          :key="item.place_id">
+                <router-link :to="`/to/${item.name}`" tag="button" >
+                    {{ item.name }}
+                </router-link>
           </div>
       </div>
       <div>
@@ -24,34 +19,52 @@
 <script>
 export default {
     created() {
-        this.$store.dispatch('FETCH_PLACE');
+        this.$store.dispatch('FETCH_PLACES');
     },
 }
 </script>
 
 <style>
-.main {
-    /* width: 100vw; */
-    /* min-height: 100%; */
-    background-size: cover;
-    background-image: url(./images/korea-main.jpg);
-    background-position: center center;
+.full {
+    position: relative;
 }
 
-/* .main::before {
-    content: "";
-    display: block;
-    padding-top: 100%; 
-} */
+.image{
+width: 100%;
+}
+
+.homeMain {
+    width: 100%;
+    position: absolute;
+    bottom: 1%;
+}
+
+.recommendBtn {
+    display: inline;
+}
 
 .recommendBtn button {
-    font-size: 25px;
-    font-weight: 600;
-    text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
     margin: 1%;
     border-radius: 10px;
     border: 1px solid black;
-    padding: 5px 30px;
     background-color: rgba(255, 355, 355, 0.3);
+}
+
+@media screen and (max-width: 770px) {
+	.recommendBtn button {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-shadow: -0.5px 0 #D3D3D3, 0 0.5px #D3D3D3, 0.5px 0 #D3D3D3, 0 -0.5px #D3D3D3;
+    padding: 5px 15;
+}
+}
+
+@media screen and (min-width: 770px) {
+	.recommendBtn button {
+    font-size: 2rem;
+    font-weight: 600;
+    text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
+    padding: 5px 30px;
+}
 }
 </style>
