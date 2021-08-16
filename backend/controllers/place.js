@@ -1,4 +1,4 @@
-import pool from "../db";
+import { pool } from "../db";
 import { defaultImageName, imageRoutingPath, removeImage } from "./image";
 import { join } from "path";
 
@@ -37,12 +37,7 @@ export const postPlace = async (req, res) => {
     try {
       const query =
         "INSERT INTO places (name, description, imageSrc) VALUES (?, ?, ?);";
-      const [ResultSetHeader] = await pool.execute(query, [
-        name,
-        description,
-        filename,
-      ]);
-      console.log(ResultSetHeader);
+      await pool.execute(query, [name, description, filename]);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -62,7 +57,8 @@ export const patchPlace = async (req, res) => {
   try {
     const { place } = req.params;
     const selectQuery = "SELECT * FROM places WHERE name = ?;";
-    const updateQuery = "UPDATE places SET name = ?, description = ?, imageSrc = ? WHERE place_id = ?;";
+    const updateQuery =
+      "UPDATE places SET name = ?, description = ?, imageSrc = ? WHERE place_id = ?;";
     var connection = await pool.getConnection();
     let [rows] = await connection.execute(selectQuery, [place]);
     if (rows.length === 0) {
@@ -77,13 +73,12 @@ export const patchPlace = async (req, res) => {
       : rows[0].description;
     const imageSrc = req.file ? req.file.filename : oldImageSrc;
     try {
-      const [ResultSetHeader] = await connection.execute(updateQuery, [
+      await connection.execute(updateQuery, [
         name,
         description,
         imageSrc,
         rows[0].place_id,
       ]);
-      console.log(ResultSetHeader);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -119,10 +114,7 @@ export const deletePlace = async (req, res) => {
     }
     removeImage(rows[0].imageSrc);
     try {
-      const [ResultSetHeader] = await connection.execute(deleteQuery, [
-        rows[0].place_id,
-      ]);
-      console.log(ResultSetHeader);
+      await connection.execute(deleteQuery, [rows[0].place_id]);
     } catch (err) {
       //failure case : ??
       res.status(400).json({ msg: "Failure" });

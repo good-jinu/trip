@@ -1,5 +1,5 @@
 import multer from "multer";
-import nanoid from "nanoid";
+import { nanoid } from "nanoid";
 import { join } from "path";
 import fs from "fs";
 
@@ -18,7 +18,7 @@ export const imageUploader = multer({
     filename: (req, file, cb) => {
       let extArray = file.mimetype.split("/");
       let extension = extArray[extArray.length - 1];
-      cb(null, `${nanoid.nanoid()}.${extension}`);
+      cb(null, `${nanoid()}.${extension}`);
     },
   }),
   fileFilter: (req, file, cb) => {

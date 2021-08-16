@@ -16,8 +16,8 @@ const placeApi = express.Router();
 placeApi.use("/", auth);
 placeApi.get("/:place", getPlace);
 
-//auth : required(level 1)
-placeApi.use("/", checkAuth(1));
+//auth : required(level 2)
+placeApi.use("/", checkAuth(2));
 placeApi.post("/", imageUploader.single("image"), postPlace);
 placeApi.patch("/:place", imageUploader.single("image"), patchPlace);
 placeApi.delete("/:place", deletePlace);
