@@ -71,7 +71,7 @@ width: 100%;
     font-size: 0.9rem;
     text-shadow: -0.5px 0 #D3D3D3, 0 0.5px #D3D3D3, 0.5px 0 #D3D3D3, 0 -0.5px #D3D3D3;
     padding: 1px 8px;
-}
+    }
 }
 
 @media screen and (min-width: 770px) {
@@ -79,6 +79,6 @@ width: 100%;
     font-size: 1.8rem;
     text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
     padding: 1px 10px;
-}
+    }
 }
 </style>
