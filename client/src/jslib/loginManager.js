@@ -30,19 +30,7 @@ async function loginProcess(_id, _password) {
 	})
 	.then((res)=>{
 		if(res.status === 200) {
-			var cleanRefTok = res.data.refreshToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-			var rfDecoded = JSON.parse(window.atob(cleanRefTok));
-			setCookie('refreshToken', res.data.refreshToken, new Date(rfDecoded.exp*1000));
-
-			var cleanpayload = res.data.accessToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-			var atDecoded = JSON.parse(window.atob(cleanpayload));
-			setCookie('accessToken',res.data.accessToken,new Date(atDecoded.exp*1000));
-			var dataToStore = {
-				isLogin: true,
-				isAdmin: atDecoded.al>1,
-				name: atDecoded.name
-			};
-			return dataToStore;
+			return setTokenCookie(res.data.refreshToken, res.data.accessToken);
 		} else {
 			return null;
 		}
@@ -66,7 +54,7 @@ async function refresh_token() {
 		})
 		.then((res)=>{
 			if(res.status===200) {
-				return getAccessTokenCookie();
+				return setTokenCookie(res.data.refreshToken, res.data.accessToken);
 			} else {
 				logoutProcess();
 				return nouser;
@@ -82,20 +70,20 @@ async function refresh_token() {
 	}
 }
 
-function getAccessTokenCookie() {
-	var acTok = getCookie('accessToken');
-	if(acTok) {
-		var cleanPayload = acTok.split('.')[1].replace(/-/g,'+').replace(/_/,'/');
-		var acDecoded = JSON.parse(window.atob(cleanPayload));
-		var user = {
-			isLogin: true,
-			isAdmin: acDecoded.al > 1,
-			name: acDecoded.name
-		};
-		return user;
-	} else {
-		return undefined;
-	}
+function setTokenCookie(refreshToken, accessToken) {
+	var cleanRefTok = refreshToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+	var rfDecoded = JSON.parse(window.atob(cleanRefTok));
+	setCookie('refreshToken', refreshToken, new Date(rfDecoded.exp*1000));
+
+	var cleanpayload = accessToken.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+	var atDecoded = JSON.parse(window.atob(cleanpayload));
+	setCookie('accessToken',accessToken,new Date(atDecoded.exp*1000));
+	var dataToStore = {
+		isLogin: true,
+		isAdmin: atDecoded.al>1,
+		name: atDecoded.name
+	};
+	return dataToStore;
 }
 
 async function logoutProcess() {
