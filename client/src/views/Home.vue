@@ -1,6 +1,6 @@
 <template>
   <div class="full">
-      <img class="image" src="./images/mainImage.jpg" alt="">
+      <img class="mainImage" src="./images/mainImage.jpg" alt="">
       <div class="homeMain">
           <div div class="recommendBtn"
           v-for="item in this.$store.state.places"
@@ -36,7 +36,7 @@ export default {
     position: relative;
 }
 
-.image{
+.mainImage{
 width: 100%;
 }
 
@@ -53,31 +53,30 @@ width: 100%;
 }
 
 .recommendBtn button {
-    /* margin: 1%; */
-    /* border-radius: 10px; */
     border: 1px solid rgba(0, 0, 0, 0);
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid black;
     background-color: rgba(0, 0, 0, 0);
     font-family: 'Recipekorea';
-    /* text-decoration: underline; */
-    /* transform: scale(1.4); */
-    /* text-underline-position: under; */
     text-transform: uppercase;
+}
+
+.recommendBtn button:hover {
+    background-color: black;
+    color: white;
+    text-shadow: none;
 }
 
 @media screen and (max-width: 770px) {
 	.recommendBtn button {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 0.9rem;
     text-shadow: -0.5px 0 #D3D3D3, 0 0.5px #D3D3D3, 0.5px 0 #D3D3D3, 0 -0.5px #D3D3D3;
-    padding: 1px 10px;
+    padding: 1px 8px;
 }
 }
 
 @media screen and (min-width: 770px) {
 	.recommendBtn button {
     font-size: 1.8rem;
-    font-weight: 600;
     text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
     padding: 1px 10px;
 }
