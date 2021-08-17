@@ -24,7 +24,7 @@ export const getPlace = async (req, res) => {
 
 export const postPlace = async (req, res) => {
   try {
-    let { name, description } = req.body;
+    let { name, description, imageCopyright } = req.body;
     if (!name) {
       res.status(400).json({ msg: "Unvalid Arguments : name" });
       removeImage(req.file);
@@ -33,11 +33,14 @@ export const postPlace = async (req, res) => {
     if (!description) {
       description = "";
     }
+    if (!imageCopyright) {
+      imageCopyright = "";
+    }
     const filename = req.file ? req.file.filename : null;
     try {
       const query =
-        "INSERT INTO places (name, description, imageSrc) VALUES (?, ?, ?);";
-      await pool.execute(query, [name, description, filename]);
+        "INSERT INTO places (name, description, imageSrc, imageCopyright) VALUES (?, ?, ?, ?);";
+      await pool.execute(query, [name, description, filename, imageCopyright]);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -58,7 +61,7 @@ export const patchPlace = async (req, res) => {
     const { place } = req.params;
     const selectQuery = "SELECT * FROM places WHERE name = ?;";
     const updateQuery =
-      "UPDATE places SET name = ?, description = ?, imageSrc = ? WHERE place_id = ?;";
+      "UPDATE places SET name = ?, description = ?, imageSrc = ?, imageCopyright = ? WHERE place_id = ?;";
     var connection = await pool.getConnection();
     let [rows] = await connection.execute(selectQuery, [place]);
     if (rows.length === 0) {
@@ -72,11 +75,15 @@ export const patchPlace = async (req, res) => {
       ? req.body.description
       : rows[0].description;
     const imageSrc = req.file ? req.file.filename : oldImageSrc;
+    const imageCopyright = req.body.imageCopyright
+      ? req.body.imageCopyright
+      : rows[0].imageCopyright;
     try {
       await connection.execute(updateQuery, [
         name,
         description,
         imageSrc,
+        imageCopyright,
         rows[0].place_id,
       ]);
     } catch (err) {
