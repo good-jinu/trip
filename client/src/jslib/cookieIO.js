@@ -1,9 +1,9 @@
 function setCookie(cookieName, cookieValue, cookieExpire, cookiePath, cookieDomain, cookieSecure) {
   var cookieText = escape(cookieName)+'='+escape(cookieValue);
-  cookieText+=(cookieExpire ? '; EXPIRES=' + cookieExpire.toGMTString() : '');
-  cookieText+=(cookiePath ? '; PATH='+cookiePath : '');
-  cookieText+=(cookieDomain ? '; DOMAIN='+cookieDomain : '');
-  cookieText+=(cookieSecure ? '; SECURE' : '');
+  cookieText+=(cookieExpire ? '; expires=' + cookieExpire.toGMTString() : '');
+  cookieText+=(cookiePath ? '; path='+cookiePath : '');
+  cookieText+=(cookieDomain ? '; domain='+cookieDomain : '');
+  cookieText+=(cookieSecure ? '; secure' : '');
   document.cookie=cookieText;
 }
 
