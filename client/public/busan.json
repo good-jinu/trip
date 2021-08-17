@@ -1,6 +1,34 @@
-{
-  "place_id": 2,
-  "name": "busan",
-  "description": "",
-  "imageSrc": "\\img\\default.png"
-}
+[
+  {
+    "place_id": "1",
+    "city": "busan",
+    "name": "해운대 해수욕장",
+    "description": "해운대는 한국의 대표적인 여름휴양지입니다. 주변의 음식점, 아쿠아리움 등 즐길거리도 풍성합니다. 해운대 해수욕장에서 뜨거운 젊음을 느껴보세요.",
+    "image": "http://localhost:8080/images/Busan_Haeundae.jpg",
+    "imageSrc": "2019,해운대,㈜써머트리 이음미디어㈜,부산광역시 부산관광공사,visitbusan.net,CC BY"
+  },
+  {
+    "place_id": "1",
+    "city": "busan",
+    "name": "동백섬",
+    "description": "동백섬은 해운대 해수욕장 남쪽끝에 위치합니다. 동백나무와 소나무가 울창한 산책로를 거닐기도 하고, 다양한 해양레저도 경험하다보면 시간가는줄 모를거에요.",
+    "image": "http://localhost:8080/images/Busan_DongbaekIsland.jpg",
+    "imageSrc": "2020,동백섬누리마루,㈜써머트리,부산광역시 부산관광공사,visitbusan.net,CC BY"
+  },
+  {
+    "place_id": "1",
+    "city": "busan",
+    "name": "센텀시티",
+    "description": "센텀시티는 신세계백화점과 롯데백화점을 중심으로 한 거대한 복합 쇼핑 문화상권입니다. 신세계 백화점은 세계에서 가장 큰 규모의 백화점으로 기네스북에 등재되었습니다. 하루종일 신나는 쇼핑을 즐겨보세요.",
+    "image": "http://localhost:8080/images/Busan_CentumCity.jpg",
+    "imageSrc": "2019,센텀시티,입산 서정희,부산광역시,visitbusan.net,CC BY"
+  },
+  {
+    "place_id": "1",
+    "city": "busan",
+    "name": "국제시장",
+    "description": "국제시장은 부산 남포동에 위치한 대규모 시장입니다. 시장안에 위치한 먹자골목에서 각종 주전부리를 즐겨보세요.",
+    "image": "http://localhost:8080/images/Busan_InternationalMarket.jpg",
+    "imageSrc": ""
+  }
+]

@@ -1,9 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import {
-  fetchPlaceList,
-  fetchPlace
-} from "../api/index.js";
+import { fetchCity, fetchPlace } from "../api/index.js";
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -13,7 +10,7 @@ export const store = new Vuex.Store({
       isAdmin: false,
       name: "",
     },
-    places: {},
+    city: {},
     place: {},
   },
   getters: {
@@ -32,8 +29,8 @@ export const store = new Vuex.Store({
         name: "",
       };
     },
-    SET_PLACES(state, places) {
-      state.places = places;
+    SET_CITY(state, city) {
+      state.city = city;
     },
     SET_PLACE(state, place) {
       state.place = place;
@@ -43,10 +40,10 @@ export const store = new Vuex.Store({
     setUser(context, user) {
       context.commit("setUser", user);
     },
-    FETCH_PLACES(context) {
-      fetchPlaceList()
+    FETCH_CITY(context) {
+      fetchCity()
         .then((response) => {
-          context.commit("SET_PLACES", response.data);
+          context.commit("SET_CITY", response.data);
         })
         .catch((error) => {
           console.log(error);

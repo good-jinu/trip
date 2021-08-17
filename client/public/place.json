@@ -1,20 +1,14 @@
 [
   {
     "place_id": 1,
-    "name": "seoul",
-    "description": "",
-    "imageSrc": "\\img\\default.png"
+    "name": "seoul"
   },
   {
     "place_id": 2,
-    "name": "busan",
-    "description": "",
-    "imageSrc": "\\img\\default.png"
+    "name": "busan"
   },
   {
     "place_id": 3,
-    "name": "jeju",
-    "description": "",
-    "imageSrc": "\\img\\default.png"
+    "name": "jeju"
   }
 ]

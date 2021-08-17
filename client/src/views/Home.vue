@@ -3,7 +3,7 @@
       <img class="mainImage" src="./images/mainImage.jpg" alt="">
       <div class="homeMain">
           <div div class="recommendBtn"
-          v-for="item in this.$store.state.places"
+          v-for="item in this.$store.state.city"
           :key="item.place_id">
                 <router-link :to="`/to/${item.name}`" tag="button" >
                     {{ item.name }}
@@ -19,19 +19,12 @@
 <script>
 export default {
     created() {
-        this.$store.dispatch('FETCH_PLACES');
+        this.$store.dispatch('FETCH_CITY');
     },
 }
 </script>
 
 <style>
-@font-face {
-    font-family: 'Recipekorea';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Recipekorea.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
-
 .full {
     position: relative;
 }

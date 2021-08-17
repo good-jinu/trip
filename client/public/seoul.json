@@ -1,6 +1,30 @@
-{
-  "place_id": 1,
-  "name": "seoul",
-  "description": "",
-  "imageSrc": "\\img\\default.png"
-}
+[
+  {"place_id":"0",
+    "city":"seoul",
+    "name":"경복궁",
+    "description":"경복궁은 조선 시대에 지어진 왕궁 중 가장 큰 궁궐입니다. 한복을 입고 거닐다보면 조선의 역사와 아름다움을 느낄 수 있습니다. 국립 고궁 박물관과 국립 민속 박물관도 함께 방문해보세요.",
+    "image":"http://localhost:8080/images/Seoul_Gyeongbokgung.jpg",
+    "imageSrc":"경복궁광화문,서울관광아카이브,archive.visitseoul.net,CC BY"
+  },
+  {"place_id":"0",
+    "city":"seoul",
+    "name":"동대문 디자인 플라자",
+    "description":"동대문 디자인 플라자는 동대문에 위치한 복합 문화공간으로 세계 최대 규모의 3차원 비정형 랜드마크 건축물입니다. 전시,패션쇼,공연 등 다양한 문화행사도 진행되고 있습니다. ",
+    "image":"http://localhost:8080/images/Seoul_DDP.jpg",
+    "imageSrc":"동대문디자인플라자 DDP 야경명소,서울관광아카이브,archive.visitseoul.net,CC BY"
+  },
+  {"place_id":"0",
+    "city":"seoul",
+    "name":"청계천",
+    "description":"청계천은 서울의 대표적인 산책로입니다. 최근에는 각종 문화행사 등이 열리는 광장이기도 합니다. 밤에 청계천을 방문하면 도심의 불빛과 청계천의 조명이 어우러져 아름다운 야경을 볼 수 있습니다.",
+    "image":"http://localhost:8080/images/Seoul_Cheonggyecheon.jpg",
+    "imageSrc":"청계천야경 청계폭포,서울관광아카이브,archive.visitseoul.net,CC BY"
+  },
+  {"place_id":"0",
+    "city":"seoul",
+    "name":"롯데월드타워",
+    "description":"롯데월드타워는 123층, 555m 높이의 세계에서 가장 높은 빌딩입니다. 아쿠아리움, 면세점, 백화점, 콘서트홀,호텔 등이 있으며, 국내 최고 높이의 전망대에서 바라보는 서울의 전경을 즐길 수 있습니다.",
+    "image":"http://localhost:8080/images/Seoul_LotteWorldTower.jpg",
+    "imageSrc":"석촌호수 가을단풍 롯데월드타워,서울관광아카이브,archive.visitseoul.net,CC BY"
+  }
+]
