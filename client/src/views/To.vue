@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="to">
       <div class="toMain">
           <h2>{{ this.$route.params.place }}</h2>
       </div>
@@ -50,13 +50,16 @@ export default {
 }
 
 @media screen and (max-width: 770px) {
+    .to {
+        margin: 5%;
+    }
+
     .recommendedPlaces {
         display: block;
     }
 
 	.toImage {
         width: 100%;
-        margin: 3%;
     }
 
     .toImage img {
@@ -65,7 +68,6 @@ export default {
 
     .toDescription {
         width: 100%;
-        margin: 3%;
     }
 }
 

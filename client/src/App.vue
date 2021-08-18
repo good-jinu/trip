@@ -58,7 +58,7 @@ export default {
 </script>
 
 <style>
-html, body, section {
+html, body {
 	width: 100vw;
 	min-height: 100vh;
 	margin: 0;
