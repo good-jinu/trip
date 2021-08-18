@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { deleteCookie } from '@/jslib/cookieIO';
 import { signupProcess, loginProcess, logoutProcess } from '@/jslib/loginManager';
 
 export default {
