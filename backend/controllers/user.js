@@ -136,21 +136,21 @@ export const refresh = async (req, res) => {
   try {
     var connection = await pool.getConnection();
     const selectQuery =
-      "SELECT u.*, t.valid valid FROM users u JOIN tokens t ON (t.tid = ? AND u.user_id = t.user_id);";
-    const validCaseQuery = "UPDATE tokens SET valid = 0 WHERE (tid = ?);";
-    const unvalidCaseQuery = "DELETE FROM tokens WHERE (user_id = ?);";
+      "SELECT u.*, t.block block FROM users u JOIN tokens t ON (t.tid = ? AND u.user_id = t.user_id);";
+    const validTokenCaseQuery = "UPDATE tokens SET block = 1 WHERE (tid = ?);";
+    const blacklistTokenCaseQuery = "DELETE FROM tokens WHERE (user_id = ?);";
     const [rows] = await connection.execute(selectQuery, [refreshPayload.tid]);
     const user = rows[0];
     if (!user) {
       res.status(403).send();
       return;
     }
-    if (user.valid) {
-      await connection.execute(validCaseQuery, [refreshPayload.tid]);
+    if (!user.block) {
+      await connection.execute(validTokenCaseQuery, [refreshPayload.tid]);
       const tokens = await createTokens(user, connection);
       res.status(200).json(tokens);
     } else {
-      await connection.execute(unvalidCaseQuery, [user.user_id]);
+      await connection.execute(blacklistTokenCaseQuery, [user.user_id]);
       console.log(`Reuse refreshToken : Forced logout id = ${user.id}`);
       res.status(403).send();
     }
@@ -174,9 +174,9 @@ export const logout = async (req, res) => {
   }
   try {
     //아래 쿼리 : 토큰을 블랙리스트에 등록
-    //const query = "UPDATE tokens SET valid = 0 WHERE tid = ? AND valid = 1;";
+    //const query = "UPDATE tokens SET block = 1 WHERE tid = ? AND block = 0;";
     //아래 쿼리 : 토큰을 관리리스트에서 삭제
-    const query = "DELETE FROM tokens WHERE tid = ? AND valid = 1;";
+    const query = "DELETE FROM tokens WHERE tid = ? AND block = 0;";
 
     const [ResultSetHeader] = await pool.execute(query, [refreshPayload.tid]);
     if (ResultSetHeader.affectedRows) {

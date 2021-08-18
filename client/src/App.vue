@@ -11,8 +11,7 @@
 
 <script>
 import TopBar from './components/TopBar.vue';
-import { getCookie, deleteCookie } from '@/jslib/cookieIO.js';
-import axios from 'axios';
+import { refresh_token } from './jslib/loginManager';
 
 export default {
 	components: {
@@ -20,39 +19,18 @@ export default {
 	},
 
 	beforeMount() {
-		var seToken=getCookie('sessionToken');
-		if(seToken) {
-			axios.get('/isOnline_process', {
-				headers: {
-					'Authorization': seToken
-				}
-			})
-			.then((res)=> {
-				if(res.status===200 && res.data.isOnline) {
-					this.$store.dispatch('setUser',{
-						isLogin: res.data.isOnline,
-						isAdmin: res.data.authority_level>1,
-						name: res.data.name
-					});
-				} else {
-					deleteCookie('sessionToken');
-					this.$store.dispatch('setUser', {
-						isLogin: false,
-						isAdmin: false,
-						name: ''
-					});
-				}
-			})
-			.catch((err) => {
-				console.error(err);
-				deleteCookie('sessionToken');
-				this.$store.dispatch('setUser', {
-					isLogin: false,
-					isAdmin: false,
-					name: ''
-				});
-			});
-		}
+		refresh_token()
+		.then((val)=>{
+			this.$store.dispatch('setUser',val);
+		});
+	},
+
+	beforeUpdate() {
+		refresh_token()
+		.then((val)=>{
+			this.$store.dispatch('setUser',val);
+		});
+
 	}
 }
 </script>

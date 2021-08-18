@@ -16,28 +16,34 @@ const nonPromisePool = mysql.createPool({
 export const pool = nonPromisePool.promise();
 
 //init refresh_token table
-(async (pool) => {
+(async () => {
+  const conn = await pool.getConnection();
+  const q0 = "SET time_zone = '+00:00';";
   const q1 = "DROP TABLE IF EXISTS tokens;";
   const q2 = `CREATE TABLE tokens (
     id INT PRIMARY KEY AUTO_INCREMENT,
     tid CHAR(21) NOT NULL UNIQUE,
     user_id INT NOT NULL,
-    valid TINYINT(1) DEFAULT 1,
+    block TINYINT(1) DEFAULT 0,
     exp DATETIME NOT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  await pool.execute(q1);
-  pool.execute(q2);
-})(pool);
+  conn.execute(q0);
+  await conn.execute(q1);
+  await conn.execute(q2);
+  conn.release();
+})();
 //set (reset auto_increment & delete expired rows) timer
-export const checkTokens = async (pool) => {
+export const checkTokens = async () => {
   console.log("run checkTokens()...");
+  const conn = await pool.getConnection();
   const q1 = "DELETE FROM tokens WHERE exp < now();";
   const q2 = "ALTER TABLE tokens AUTO_INCREMENT = 1;";
-  await pool.execute(q1);
-  await pool.execute(q2);
+  await conn.execute(q1);
+  await conn.execute(q2);
   //FOR DEBUG
-  const [rows] = await pool.execute("SELECT * FROM tokens;");
+  const [rows] = await conn.execute("SELECT * FROM tokens;");
   console.log(rows);
+  conn.release();
 };
-//테스트용으로 1분마다 작동(추후 2시간 간격으로 늘릴것)
-setInterval(checkTokens, 1 * 1 * 60 * 1000, pool);
+//테스트용으로 5분마다 작동(추후 2시간 간격으로 늘릴것)
+setInterval(checkTokens, 5 * 1 * 60 * 1000);

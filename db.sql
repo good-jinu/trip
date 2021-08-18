@@ -1,11 +1,10 @@
-/*set session level timezone to UTC+0*/
-SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `places`;
 CREATE TABLE `places` (
   `place_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(16) NOT NULL,
   `description` varchar(100) NOT NULL DEFAULT '',
   `imageSrc` char(26) DEFAULT NULL,
+  `imageCopyright` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`place_id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
