@@ -30,18 +30,19 @@ export const search = async (req, res) => {
 
 const createSearchQuery = (req) => {
   const { mode } = req.params;
-  const { name } = req.query;
+  const { placeId, attractionId } = req.query;
   if (mode === "0") {
-    //search all places, simple results
+    //search by placeId, simple results
     return {
-      query: "SELECT place_id, name, imageSrc FROM places;",
-      args: [],
+      query:
+        "SELECT attraction_id, name, imageSrc FROM attractions WHERE place_id = ?;",
+      args: [placeId],
     };
   } else if (mode === "1") {
-    //search by name, full results
+    //search by attractionId, full results
     return {
-      query: "SELECT * FROM places WHERE name = ?;",
-      args: [name],
+      query: "SELECT * FROM attractions WHERE attraction_id = ?;",
+      args: [attractionId],
     };
   }
   return {};
@@ -49,11 +50,12 @@ const createSearchQuery = (req) => {
 
 //require use 'auth', 'checkAuth' middleware on all below functions
 
-export const postPlace = async (req, res) => {
+export const postAttraction = async (req, res) => {
   try {
     let { name, description, imageCopyright } = req.body;
+    const { placeId } = req.params;
     if (!name) {
-      res.status(400).json({ msg: "Unvalid Arguments : name" });
+      res.status(400).json({ msg: "Unvalid Arguments" });
       removeImage(req.file);
       return;
     }
@@ -64,10 +66,16 @@ export const postPlace = async (req, res) => {
       imageCopyright = "";
     }
     const filename = req.file ? req.file.filename : null;
+    const query =
+      "INSERT INTO attractions (place_id, name, description, imageSrc, imageCopyright) VALUES (?, ?, ?, ?, ?);";
     try {
-      const query =
-        "INSERT INTO places (name, description, imageSrc, imageCopyright) VALUES (?, ?, ?, ?);";
-      await pool.execute(query, [name, description, filename, imageCopyright]);
+      await pool.execute(query, [
+        placeId,
+        name,
+        description,
+        filename,
+        imageCopyright,
+      ]);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -83,16 +91,16 @@ export const postPlace = async (req, res) => {
   }
 };
 
-export const patchPlace = async (req, res) => {
+export const patchAttraction = async (req, res) => {
   try {
-    const { placeId } = req.params;
-    const selectQuery = "SELECT * FROM places WHERE place_id = ?;";
+    const { attractionId } = req.params;
+    const selectQuery = "SELECT * FROM attractions WHERE attraction_id = ?;";
     const updateQuery =
-      "UPDATE places SET name = ?, description = ?, imageSrc = ?, imageCopyright = ? WHERE place_id = ?;";
+      "UPDATE attractions SET name = ?, description = ?, imageSrc = ?, imageCopyright = ? WHERE attraction_id = ?;";
     var connection = await pool.getConnection();
-    let [rows] = await connection.execute(selectQuery, [placeId]);
+    let [rows] = await connection.execute(selectQuery, [attractionId]);
     if (rows.length === 0) {
-      res.status(404).json({ msg: "place NOT FOUND" });
+      res.status(404).json({ msg: "attraction NOT FOUND" });
       removeImage(req.file);
       return;
     }
@@ -111,7 +119,7 @@ export const patchPlace = async (req, res) => {
         description,
         imageSrc,
         imageCopyright,
-        placeId,
+        attractionId,
       ]);
     } catch (err) {
       //failure case
@@ -135,20 +143,21 @@ export const patchPlace = async (req, res) => {
   }
 };
 
-export const deletePlace = async (req, res) => {
+export const deleteAttraction = async (req, res) => {
   try {
-    const { placeId } = req.params;
-    const selectQuery = "SELECT imageSrc FROM places WHERE place_id = ?;";
-    const deleteQuery = "DELETE FROM places WHERE place_id = ?;";
+    const { attractionId } = req.params;
+    const selectQuery =
+      "SELECT imageSrc FROM attractions WHERE attraction_id = ?;";
+    const deleteQuery = "DELETE FROM attractions WHERE attraction_id = ?;";
     var connection = await pool.getConnection();
-    let [rows] = await connection.execute(selectQuery, [placeId]);
+    let [rows] = await connection.execute(selectQuery, [attractionId]);
     if (rows.length === 0) {
-      res.status(404).json({ msg: "place NOT FOUND" });
+      res.status(404).json({ msg: "attraction NOT FOUND" });
       return;
     }
     removeImage(rows[0].imageSrc);
     try {
-      await connection.execute(deleteQuery, [placeId]);
+      await connection.execute(deleteQuery, [attractionId]);
     } catch (err) {
       //failure case : ??
       res.status(400).json({ msg: "Failure" });
