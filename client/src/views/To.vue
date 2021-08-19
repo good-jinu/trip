@@ -1,50 +1,95 @@
 <template>
-  <div>
-      <header>헤더 암튼 헤더</header>
-      <div class="main">
-          <div>
-              <!-- 달력 -->
-          </div>
+  <div class="to">
+      <div class="toMain">
+          <h2>{{ this.$route.params.place }}</h2>
       </div>
-      <div>
-          <!-- 여행지추천 -->
+      <div class="recommendedPlaces" v-for="item in placeItems" v-bind:key="item.place_id">
+          <div class="toImage">
+              <img :src="item.image">
+              <small>이미지 출처: {{ item.imageSrc }}</small>
+          </div>
+          <div class="toDescription">
+              <h3>{{ item.name }}</h3>
+              <div>{{ item.description }}</div>
+          </div>
       </div>
   </div>
 </template>
 
 <script>
 export default {
-    
+    computed: {
+        placeItems() {
+            return this.$store.state.place;
+        }
+    },
+    created() {
+        const placeName = this.$route.params.place
+        this.$store.dispatch('FETCH_PLACE', placeName);
+    }
 }
 </script>
 
 <style>
-header {
-    height: 30px;
-    color: white;
-    background-color: black;
+.toMain {
+    font-family: 'Recipekorea';
+    font-size: 2rem;
+    text-align: center;
+    text-transform: uppercase;
 }
 
-.main {
+.toImage img {
     width: 100%;
-    background-image: url(./images/korea-main.jpg);
-    background-position: center center;
+    object-fit: cover;
 }
 
-.main::before {
-    content: "";
-    display: block;
-    padding-top: 15%;
+
+.toImage small {
+    color: darkgray;
+    display: flex;
 }
 
-.recommendBtn button {
-    font-size: 25px;
-    font-weight: 600;
-    text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
-    margin: 1%;
-    border-radius: 10px;
-    border: 1px solid black;
-    padding: 5px 30px;
-    background-color: rgba(255, 255, 255, 0.3);
+@media screen and (max-width: 770px) {
+    .to {
+        margin: 5%;
+    }
+
+    .recommendedPlaces {
+        display: block;
+    }
+
+	.toImage {
+        width: 100%;
+    }
+
+    .toImage img {
+        height: 50vw;
+    }
+
+    .toDescription {
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 770px) {
+    .recommendedPlaces {
+        display: flex;
+    }
+
+	.toImage {
+        width: 50%;
+        margin: 3%;
+        margin-right: 1.5%;
+    }
+
+    .toImage img {
+        height: 25vw;
+    }
+
+    .toDescription {
+        width: 50%;
+        margin: 3%;
+        margin-left: 1.5%;
+    }
 }
 </style>

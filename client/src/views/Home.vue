@@ -1,12 +1,13 @@
 <template>
-  <div>
-      <header>헤더 암튼 헤더</header>
-      <div class="main">
-          <div class="recommendBtn">
-              <button>서울</button>
-              <button>제주</button>
-              <button>부산</button>
-              <button>강릉</button>
+  <div class="full">
+      <img class="mainImage" src="./images/mainImage.jpg" alt="">
+      <div class="homeMain">
+          <div div class="recommendBtn"
+          v-for="item in this.$store.state.city"
+          :key="item.place_id">
+                <router-link :to="`/to/${item.name}`" tag="button" >
+                    {{ item.name }}
+                </router-link>
           </div>
       </div>
       <div>
@@ -17,39 +18,60 @@
 
 <script>
 export default {
-    
+    created() {
+        this.$store.dispatch('FETCH_CITY');
+    },
 }
 </script>
 
 <style>
-header {
-    height: 30px;
-    color: white;
-    background-color: black;
+.full {
+    position: relative;
 }
 
-.main {
-    /* width: 100vw; */
-    /* min-height: 100%; */
-    background-size: cover;
-    background-image: url(./images/korea-main.jpg);
-    background-position: center center;
+.mainImage{
+width: 100%;
 }
 
-/* .main::before {
-    content: "";
-    display: block;
-    padding-top: 100%; 
-} */
+.homeMain {
+    text-align: right;
+    width: 100%;
+    position: absolute;
+    top: 3%;
+    right: 3%;
+}
+
+.recommendBtn {
+    display: inline;
+}
 
 .recommendBtn button {
-    font-size: 25px;
-    font-weight: 600;
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-bottom: 2px solid black;
+    background-color: rgba(0, 0, 0, 0);
+    font-family: 'Recipekorea';
+    text-transform: uppercase;
+}
+
+.recommendBtn button:hover {
+    background-color: black;
+    color: white;
+    text-shadow: none;
+}
+
+@media screen and (max-width: 770px) {
+	.recommendBtn button {
+    font-size: 0.9rem;
+    text-shadow: -0.5px 0 #D3D3D3, 0 0.5px #D3D3D3, 0.5px 0 #D3D3D3, 0 -0.5px #D3D3D3;
+    padding: 1px 8px;
+    }
+}
+
+@media screen and (min-width: 770px) {
+	.recommendBtn button {
+    font-size: 1.8rem;
     text-shadow: -1px 0 #D3D3D3, 0 1px #D3D3D3, 1px 0 #D3D3D3, 0 -1px #D3D3D3;
-    margin: 1%;
-    border-radius: 10px;
-    border: 1px solid black;
-    padding: 5px 30px;
-    background-color: rgba(255, 355, 355, 0.3);
+    padding: 1px 10px;
+    }
 }
 </style>
