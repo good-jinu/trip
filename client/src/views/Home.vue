@@ -3,7 +3,7 @@
       <img class="mainImage" src="./images/mainImage.jpg" alt="">
       <div class="homeMain">
           <div div class="recommendBtn"
-          v-for="item in this.$store.state.city"
+          v-for="item in this.$store.state.place"
           :key="item.place_id">
                 <router-link :to="`/to/${item.name}`" tag="button" >
                     {{ item.name }}
@@ -19,7 +19,7 @@
 <script>
 export default {
     created() {
-        this.$store.dispatch('FETCH_CITY');
+        this.$store.dispatch('FETCH_PLACE');
     },
 }
 </script>

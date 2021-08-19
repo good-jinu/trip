@@ -3,13 +3,13 @@
       <div class="toMain">
           <h2>{{ this.$route.params.place }}</h2>
       </div>
-      <div class="recommendedPlaces" v-for="item in placeItems" v-bind:key="item.place_id">
+      <div class="recommendedAttraction" v-for="item in attractionList" v-bind:key="item.attracktion">
           <div class="toImage">
-              <img :src="item.image">
-              <small>이미지 출처: {{ item.imageSrc }}</small>
+              <img :src="item.imageSrc">
+              <small>이미지 출처: {{ item.imageCopyright }}</small>
           </div>
           <div class="toDescription">
-              <h3>{{ item.name }}</h3>
+              <h3>{{ item.attraction }}</h3>
               <div>{{ item.description }}</div>
           </div>
       </div>
@@ -19,13 +19,13 @@
 <script>
 export default {
     computed: {
-        placeItems() {
-            return this.$store.state.place;
+        attractionList() {
+            return this.$store.state.attraction;
         }
     },
     created() {
         const placeName = this.$route.params.place
-        this.$store.dispatch('FETCH_PLACE', placeName);
+        this.$store.dispatch('FETCH_ATTRACTION', placeName);
     }
 }
 </script>
@@ -54,7 +54,7 @@ export default {
         margin: 5%;
     }
 
-    .recommendedPlaces {
+    .recommendedAttraction {
         display: block;
     }
 
@@ -72,7 +72,7 @@ export default {
 }
 
 @media screen and (min-width: 770px) {
-    .recommendedPlaces {
+    .recommendedAttraction {
         display: flex;
     }
 

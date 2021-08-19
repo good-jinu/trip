@@ -1,11 +1,11 @@
 import axios from 'axios'
 
-async function fetchCity() {
+async function fetchPlace() {
   return axios.get(`/place.json`);
 }
 
-function fetchPlace(name) {
+function fetchAttraction(name) {
   return axios.get(`/${name}.json`);
 }
 
-export { fetchCity, fetchPlace };
+export { fetchPlace, fetchAttraction };
