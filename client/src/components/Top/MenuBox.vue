@@ -87,6 +87,7 @@ export default {
 				name: ''
 			});
 			logoutProcess();
+			this.$router.push('/');
 		}
 	}
 };
@@ -95,6 +96,7 @@ export default {
 <style>
 .modal-container {
 	position: fixed;
+	z-index: 9;
 	Top: 0;
 	left: 0;
 	background-color: rgba(0, 0, 0, 0.5);

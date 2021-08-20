@@ -43,34 +43,39 @@ export default {
 						frm.append('imageCopyright', event.target.imageCopyright.value);
 					}
 				}
-				axios.get("/placeinfo/"+event.target.name.value)
-				.then(()=> {
-					axios.patch("/placeinfo/"+event.target.name.value,frm, {
-						headers: {
-							"Authorization": "Bearer "+getCookie("accessToken")
-						}
-					})
-					.then(()=> {
-						window.alert('Uploaded!');
-					})
-					.catch((err)=> {
-						window.alert('Upload failed!');
-						console.error(err);
-					});
+				axios.get("/place/info/"+event.target.name.value)
+				.then((res)=> {
+					if(res.data.length>0) {
+						axios.patch("/place/"+res.data[0].place_id.toString(),frm, {
+							headers: {
+								"Authorization": "Bearer "+getCookie("accessToken")
+							}
+						})
+						.then(()=> {
+							window.alert('Uploaded!');
+						})
+						.catch((err)=> {
+							window.alert('Upload failed!');
+							console.error(err);
+						});
+					} else {
+						axios.post("/place",frm, {
+							headers: {
+								"Authorization": "Bearer "+getCookie("accessToken")
+							}
+						})
+						.then(()=> {
+							window.alert("Uploaded!");
+						})
+						.catch((err)=> {
+							window.alert('Upload failed!');
+							console.error(err);
+						});
+					}
 				})
-				.catch(()=> {
-					axios.post("/placeinfo",frm, {
-						headers: {
-							"Authorization": "Bearer "+getCookie("accessToken")
-						}
-					})
-					.then(()=> {
-						window.alert("Uploaded!");
-					})
-					.catch((err)=> {
-						window.alert('Upload failed!');
-						console.error(err);
-					});
+				.catch((err)=> {
+					console.error(err);
+					window.alert('Upload failed..');
 				});
 			} else {
 				window.alert('Enter place name');
