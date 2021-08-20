@@ -6,15 +6,20 @@ import {
   postPlace,
   patchPlace,
   search,
+  getPlaceByName,
+  getPlaceList,
+  getPlaceCount,
 } from "../controllers/place";
 
 const placeApi = express.Router();
 
 //auth : no
+placeApi.get("/count", getPlaceCount);
+placeApi.get("/info/:place", getPlaceByName, search);
+placeApi.get("/list", getPlaceList, search);
 
 //auth : optional
 placeApi.use("/", auth);
-placeApi.get("/search/:mode", search);
 
 //auth : required(level 2)
 placeApi.use("/", checkAuth(2));

@@ -4,18 +4,11 @@ import { join } from "path";
 
 export const search = async (req, res) => {
   try {
-    const { query, args } = createSearchQuery(req);
-    if (!query) {
-      res.status(400).json({ msg: "Unsupported mode value" });
-      return;
-    }
-    for (const arg of args) {
-      if (!arg) {
-        res.status(400).json({ msg: "Unvalid Arguments" });
-        return;
-      }
-    }
-    const [rows] = await pool.execute(query, args);
+    var [rows] = await pool.execute(req.queryStr, req.queryArgs);
+  } catch (err) {
+    res.status(400).json({ msg: "Failure" });
+  }
+  try {
     const length = rows.length;
     for (let i = 0; i < length; ++i) {
       const filename = rows[i].imageSrc ? rows[i].imageSrc : defaultImageName;
@@ -28,23 +21,36 @@ export const search = async (req, res) => {
   }
 };
 
-const createSearchQuery = (req) => {
-  const { mode } = req.params;
-  const { name } = req.query;
-  if (mode === "0") {
-    //search all places, simple results
-    return {
-      query: "SELECT place_id, name, imageSrc FROM places;",
-      args: [],
-    };
-  } else if (mode === "1") {
-    //search by name, full results
-    return {
-      query: "SELECT * FROM places WHERE name = ?;",
-      args: [name],
-    };
+export const getPlaceByName = async (req, res, next) => {
+  const { place } = req.params;
+  req.queryStr =
+    "SELECT p.*, IFNULL(a.c, 0) attractionCount FROM places p LEFT JOIN (SELECT place_id, COUNT(*) c FROM attractions GROUP BY place_id) a ON p.place_id = a.place_id WHERE p.name = ?;";
+  req.queryArgs = [place];
+  next();
+};
+
+export const getPlaceList = async (req, res, next) => {
+  let { page } = req.query;
+  page = !page ? 1 : page * 1;
+  if (isNaN(page)) {
+    res.status(400).send();
+    return;
   }
-  return {};
+  const index = (page - 1) * 20;
+  req.queryStr = "SELECT name, place_id, imageSrc FROM places LIMIT ?, 20";
+  req.queryArgs = [index];
+  next();
+};
+
+export const getPlaceCount = async (req, res) => {
+  try {
+    const query = "SELECT COUNT(*) cnt FROM places;";
+    const [rows] = await pool.execute(query);
+    res.status(200).json(rows[0]);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Internal Server Error" });
+  }
 };
 
 //require use 'auth', 'checkAuth' middleware on all below functions

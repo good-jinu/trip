@@ -1,15 +1,23 @@
 import express from "express";
 import { auth, checkAuth } from "../auth";
-import { deleteAttraction, patchAttraction, postAttraction, search } from "../controllers/attraction";
+import {
+  deleteAttraction,
+  getAttractionInfo,
+  getAttractionList,
+  patchAttraction,
+  postAttraction,
+  search,
+} from "../controllers/attraction";
 import { imageUploader } from "../controllers/image";
 
 const attractionApi = express.Router();
 
 //auth : no
+attractionApi.get("/info/:attractionId", getAttractionInfo, search);
+attractionApi.get("/list/:placeId", getAttractionList, search);
 
 //auth : optional
 attractionApi.use("/", auth);
-attractionApi.get("/search/:mode", search);
 
 //auth : required(level 2)
 attractionApi.use("/", checkAuth(2));

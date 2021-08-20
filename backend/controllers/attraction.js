@@ -4,18 +4,12 @@ import { join } from "path";
 
 export const search = async (req, res) => {
   try {
-    const { query, args } = createSearchQuery(req);
-    if (!query) {
-      res.status(400).json({ msg: "Unsupported mode value" });
-      return;
-    }
-    for (const arg of args) {
-      if (!arg) {
-        res.status(400).json({ msg: "Unvalid Arguments" });
-        return;
-      }
-    }
-    const [rows] = await pool.execute(query, args);
+    var [rows] = await pool.execute(req.queryStr, req.queryArgs);
+  } catch (err) {
+    res.status(400).json({ msg: "Failure" });
+    return;
+  }
+  try {
     const length = rows.length;
     for (let i = 0; i < length; ++i) {
       const filename = rows[i].imageSrc ? rows[i].imageSrc : defaultImageName;
@@ -28,24 +22,25 @@ export const search = async (req, res) => {
   }
 };
 
-const createSearchQuery = (req) => {
-  const { mode } = req.params;
-  const { placeId, attractionId } = req.query;
-  if (mode === "0") {
-    //search by placeId, simple results
-    return {
-      query:
-        "SELECT attraction_id, name, imageSrc FROM attractions WHERE place_id = ?;",
-      args: [placeId],
-    };
-  } else if (mode === "1") {
-    //search by attractionId, full results
-    return {
-      query: "SELECT * FROM attractions WHERE attraction_id = ?;",
-      args: [attractionId],
-    };
+export const getAttractionInfo = async (req, res, next) => {
+  const { attractionId } = req.params;
+  req.queryStr = "SELECT * FROM attractions WHERE attraction_id = ?";
+  req.queryArgs = [attractionId];
+  next();
+};
+
+export const getAttractionList = async (req, res, next) => {
+  const { placeId } = req.params;
+  let { page } = req.query;
+  page = !page ? 1 : page * 1;
+  if (isNaN(page)) {
+    res.status(400).send();
+    return;
   }
-  return {};
+  const index = (page - 1) * 20;
+  req.queryStr = "SELECT name, attraction_id, imageSrc FROM attractions WHERE place_id = ? LIMIT ?, 20";
+  req.queryArgs = [placeId, index];
+  next();
 };
 
 //require use 'auth', 'checkAuth' middleware on all below functions
