@@ -9,6 +9,7 @@ import passport from "passport";
 import userApi from "./routers/userApi";
 import placeApi from "./routers/placeApi";
 import { imageStorePath, imageRoutingPath } from "./controllers/image";
+import attractionApi from "./routers/attractionApi";
 
 const app = express();
 
@@ -22,7 +23,8 @@ app.use(imageRoutingPath, express.static(imageStorePath));
 
 app.use("/", indexRouter);
 app.use("/", userApi);
-app.use("/placeinfo", placeApi);
+app.use("/place", placeApi);
+app.use("/attraction", attractionApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
