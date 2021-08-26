@@ -7,6 +7,8 @@ export const search = async (req, res) => {
     var [rows] = await pool.execute(req.queryStr, req.queryArgs);
   } catch (err) {
     res.status(400).json({ msg: "Failure" });
+    console.log(err);
+    return;
   }
   try {
     const length = rows.length;

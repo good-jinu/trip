@@ -31,6 +31,7 @@ export const pool = nonPromisePool.promise();
   await conn.execute(q1);
   await conn.execute(q2);
   conn.release();
+  console.log("DB connection/init complete");
 })();
 //set (reset auto_increment & delete expired rows) timer
 export const checkTokens = async () => {
