@@ -31,6 +31,8 @@ export const pool = nonPromisePool.promise();
   await conn.execute(q1);
   await conn.execute(q2);
   conn.release();
+  //테스트용으로 5분마다 작동(추후 2시간 간격으로 늘릴것)
+  setInterval(checkTokens, 5 * 1 * 60 * 1000);
   console.log("DB connection/init complete");
 })();
 //set (reset auto_increment & delete expired rows) timer
@@ -46,5 +48,3 @@ export const checkTokens = async () => {
   console.log(rows);
   conn.release();
 };
-//테스트용으로 5분마다 작동(추후 2시간 간격으로 늘릴것)
-setInterval(checkTokens, 5 * 1 * 60 * 1000);

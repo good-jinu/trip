@@ -7,7 +7,6 @@ export const search = async (req, res) => {
     var [rows] = await pool.execute(req.queryStr, req.queryArgs);
   } catch (err) {
     res.status(400).json({ msg: "Failure" });
-    console.log(err);
     return;
   }
   try {
@@ -38,7 +37,7 @@ export const getPlaceList = async (req, res, next) => {
     res.status(400).send();
     return;
   }
-  const index = (page - 1) * 20;
+  const index = ((page - 1) * 20).toString();
   req.queryStr = "SELECT name, place_id, imageSrc FROM places LIMIT ?, 20";
   req.queryArgs = [index];
   next();
