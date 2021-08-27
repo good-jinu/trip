@@ -22,15 +22,15 @@ export const search = async (req, res) => {
   }
 };
 
-export const getPlaceByName = async (req, res, next) => {
-  const { place } = req.params;
-  req.queryStr =
-    "SELECT p.*, IFNULL(a.c, 0) attractionCount FROM places p LEFT JOIN (SELECT place_id, COUNT(*) c FROM attractions GROUP BY place_id) a ON p.place_id = a.place_id WHERE p.name = ?;";
-  req.queryArgs = [place];
+export const getAttractionInfo = async (req, res, next) => {
+  const { attractionId } = req.params;
+  req.queryStr = "SELECT * FROM attractions WHERE attraction_id = ?";
+  req.queryArgs = [attractionId];
   next();
 };
 
-export const getPlaceList = async (req, res, next) => {
+export const getAttractionList = async (req, res, next) => {
+  const { placeId } = req.params;
   let { page } = req.query;
   page = !page ? 1 : page * 1;
   if (isNaN(page)) {
@@ -38,29 +38,20 @@ export const getPlaceList = async (req, res, next) => {
     return;
   }
   const index = ((page - 1) * 20).toString();
-  req.queryStr = "SELECT name, place_id, imageSrc FROM places LIMIT ?, 20";
-  req.queryArgs = [index];
+  req.queryStr =
+    "SELECT name, attraction_id, imageSrc FROM attractions WHERE place_id = ? LIMIT ?, 20";
+  req.queryArgs = [placeId, index];
   next();
-};
-
-export const getPlaceCount = async (req, res) => {
-  try {
-    const query = "SELECT COUNT(*) cnt FROM places;";
-    const [rows] = await pool.execute(query);
-    res.status(200).json(rows[0]);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Internal Server Error" });
-  }
 };
 
 //require use 'auth', 'checkAuth' middleware on all below functions
 
-export const postPlace = async (req, res) => {
+export const postAttraction = async (req, res) => {
   try {
     let { name, description, imageCopyright } = req.body;
+    const { placeId } = req.params;
     if (!name) {
-      res.status(400).json({ msg: "Unvalid Arguments : name" });
+      res.status(400).json({ msg: "Unvalid Arguments" });
       removeImage(req.file);
       return;
     }
@@ -71,10 +62,16 @@ export const postPlace = async (req, res) => {
       imageCopyright = "";
     }
     const filename = req.file ? req.file.filename : null;
+    const query =
+      "INSERT INTO attractions (place_id, name, description, imageSrc, imageCopyright) VALUES (?, ?, ?, ?, ?);";
     try {
-      const query =
-        "INSERT INTO places (name, description, imageSrc, imageCopyright) VALUES (?, ?, ?, ?);";
-      await pool.execute(query, [name, description, filename, imageCopyright]);
+      await pool.execute(query, [
+        placeId,
+        name,
+        description,
+        filename,
+        imageCopyright,
+      ]);
     } catch (err) {
       //failure case
       //db datatype이랑 입력값 미일치
@@ -90,16 +87,16 @@ export const postPlace = async (req, res) => {
   }
 };
 
-export const patchPlace = async (req, res) => {
+export const patchAttraction = async (req, res) => {
   try {
-    const { placeId } = req.params;
-    const selectQuery = "SELECT * FROM places WHERE place_id = ?;";
+    const { attractionId } = req.params;
+    const selectQuery = "SELECT * FROM attractions WHERE attraction_id = ?;";
     const updateQuery =
-      "UPDATE places SET name = ?, description = ?, imageSrc = ?, imageCopyright = ? WHERE place_id = ?;";
+      "UPDATE attractions SET name = ?, description = ?, imageSrc = ?, imageCopyright = ? WHERE attraction_id = ?;";
     var connection = await pool.getConnection();
-    let [rows] = await connection.execute(selectQuery, [placeId]);
+    let [rows] = await connection.execute(selectQuery, [attractionId]);
     if (rows.length === 0) {
-      res.status(404).json({ msg: "place NOT FOUND" });
+      res.status(404).json({ msg: "attraction NOT FOUND" });
       removeImage(req.file);
       return;
     }
@@ -118,7 +115,7 @@ export const patchPlace = async (req, res) => {
         description,
         imageSrc,
         imageCopyright,
-        placeId,
+        attractionId,
       ]);
     } catch (err) {
       //failure case
@@ -142,20 +139,21 @@ export const patchPlace = async (req, res) => {
   }
 };
 
-export const deletePlace = async (req, res) => {
+export const deleteAttraction = async (req, res) => {
   try {
-    const { placeId } = req.params;
-    const selectQuery = "SELECT imageSrc FROM places WHERE place_id = ?;";
-    const deleteQuery = "DELETE FROM places WHERE place_id = ?;";
+    const { attractionId } = req.params;
+    const selectQuery =
+      "SELECT imageSrc FROM attractions WHERE attraction_id = ?;";
+    const deleteQuery = "DELETE FROM attractions WHERE attraction_id = ?;";
     var connection = await pool.getConnection();
-    let [rows] = await connection.execute(selectQuery, [placeId]);
+    let [rows] = await connection.execute(selectQuery, [attractionId]);
     if (rows.length === 0) {
-      res.status(404).json({ msg: "place NOT FOUND" });
+      res.status(404).json({ msg: "attraction NOT FOUND" });
       return;
     }
     removeImage(rows[0].imageSrc);
     try {
-      await connection.execute(deleteQuery, [placeId]);
+      await connection.execute(deleteQuery, [attractionId]);
     } catch (err) {
       //failure case : ??
       res.status(400).json({ msg: "Failure" });

@@ -19,9 +19,6 @@ export const store = new Vuex.Store({
     getUserInfo(state) {
       return state.user;
     },
-    // getAttractionInfo(state) {
-    //   return state.attraction;
-    // }
   },
   mutations: {
     setUser(state, user) {
@@ -79,6 +76,13 @@ export const store = new Vuex.Store({
         });
       }
     },
+    DELETE_SCHEDULE(state, index) {
+      state.schedule[index[0]].data.splice(index[1], 1)
+
+      if (state.schedule[index[0]].data) {
+        state.schedule.splice(index[0], 1)
+      }
+    }
   },
   actions: {
     setUser(context, user) {
@@ -102,8 +106,5 @@ export const store = new Vuex.Store({
           console.log(error);
         });
     },
-    // REGISTER_SCHDULE() {
-
-    // }
   },
 });
