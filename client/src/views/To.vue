@@ -2,6 +2,7 @@
   <div class="to">
       <div class="toMain">
           <h2>{{ this.$route.params.place }}</h2>
+          <router-link :to="`/schedule`" tag="button">일정 짜기</router-link>
       </div>
       <div class="recommendedAttraction" v-for="item in attractionList" v-bind:key="item.attracktion">
           <div class="toImage">
@@ -54,6 +55,14 @@ export default {
         margin: 5%;
     }
 
+    .toMain h2 {
+        margin-bottom: 0;
+    }
+
+    .toMain button {
+        margin-bottom: 5%;
+    }
+
     .recommendedAttraction {
         display: block;
     }
@@ -72,6 +81,27 @@ export default {
 }
 
 @media screen and (min-width: 770px) {
+    .to {
+        margin: 5% 10%;
+    }
+
+    .toMain {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .toMain h2 {
+        grid-column: 2;
+    }
+
+    .toMain button {
+        width: 80px;
+        height: 40px;
+        margin: 6%;
+        justify-self: end;
+        align-self: center;
+    }
+
     .recommendedAttraction {
         display: flex;
     }
@@ -83,7 +113,7 @@ export default {
     }
 
     .toImage img {
-        height: 25vw;
+        height: 20vw;
     }
 
     .toDescription {
