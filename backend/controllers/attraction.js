@@ -38,8 +38,7 @@ export const getAttractionList = async (req, res, next) => {
     return;
   }
   const index = ((page - 1) * 20).toString();
-  req.queryStr =
-    "SELECT name, attraction_id, imageSrc FROM attractions WHERE place_id = ? LIMIT ?, 20";
+  req.queryStr = "SELECT * FROM attractions WHERE place_id = ? LIMIT ?, 20";
   req.queryArgs = [placeId, index];
   next();
 };
