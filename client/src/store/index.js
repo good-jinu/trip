@@ -33,7 +33,7 @@ export const store = new Vuex.Store({
     SET_SCHEDULE(state, obj) {
       function addProperty(key) {
         try {
-          obj[key] = state.attraction.find((x) => x.attraction == obj.attraction)[key];
+          obj[key] = state.attraction.find((x) => x.name == obj.attraction)[key];
         } catch (error) {
           obj[key] = "";
         }
@@ -41,6 +41,8 @@ export const store = new Vuex.Store({
       addProperty("imageSrc")
       addProperty("imageCopyright");
       addProperty("description");
+
+      console.log(obj.attraction);
 
       let arr = {
         date: obj.startDateTime.slice(5, 10),
@@ -98,7 +100,8 @@ export const store = new Vuex.Store({
         });
     },
     FETCH_ATTRACTION(context, name) {
-      fetchAttraction(name)
+      let id = this.state.place.find((item) => item.name == name).place_id
+      fetchAttraction(id)
         .then((response) => {
           context.commit("SET_ATTRACTION", response.data);
         })

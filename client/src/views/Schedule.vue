@@ -24,7 +24,7 @@
         장소:
         <input list="attractionList" v-model="attraction" required>
           <datalist id="attractionList">
-            <option v-for="item of observeAttraction" :value="item.attraction" :key="item.attraction"></option>
+            <option v-for="item of observeAttraction" :value="item.name" :key="item.name"></option>
           </datalist>
       </div>
       <div class="selectScheduleStartTime">
@@ -201,7 +201,7 @@ export default {
   font-size: 0.8rem;
   text-transform: uppercase;
   font-style: italic;
-  opacity: 20%;
+  color: lightgray;
 }
 
 .scheduleAttraction {

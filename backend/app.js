@@ -43,4 +43,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
+const cors = require('cors');
+app.use(cors())
+
 export default app;
