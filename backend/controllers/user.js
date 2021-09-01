@@ -17,7 +17,12 @@ const createTokens = async (user, conn) => {
     await conn.execute(query, [tid, user.user_id, db_exp]);
 
     const accessToken = jwt.sign(
-      { id: user.id, name: user.name, al: user.authority_level },
+      {
+        id: user.id,
+        name: user.name,
+        al: user.authority_level,
+        uid: user.user_id,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "10m" }
     );

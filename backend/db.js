@@ -21,8 +21,7 @@ export const pool = nonPromisePool.promise();
   const q0 = "SET time_zone = '+00:00';";
   const q1 = "DROP TABLE IF EXISTS tokens;";
   const q2 = `CREATE TABLE tokens (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    tid CHAR(21) NOT NULL UNIQUE,
+    tid CHAR(21) NOT NULL PRIMARY KEY,
     user_id INT NOT NULL,
     block TINYINT(1) DEFAULT 0,
     exp DATETIME NOT NULL
@@ -40,9 +39,7 @@ export const checkTokens = async () => {
   console.log("run checkTokens()...");
   const conn = await pool.getConnection();
   const q1 = "DELETE FROM tokens WHERE exp < now();";
-  const q2 = "ALTER TABLE tokens AUTO_INCREMENT = 1;";
   await conn.execute(q1);
-  await conn.execute(q2);
   //FOR DEBUG
   const [rows] = await conn.execute("SELECT * FROM tokens;");
   console.log(rows);

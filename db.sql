@@ -1,3 +1,4 @@
+SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `attractions`;
 CREATE TABLE `attractions` (
   `attraction_id` int NOT NULL AUTO_INCREMENT,
@@ -34,8 +35,8 @@ CREATE TABLE `schedule_events` (
   `id` int NOT NULL AUTO_INCREMENT,
   `schedule_id` int NOT NULL,
   `attraction_id` int NOT NULL,
-  `start_time` datetime NOT NULL,
-  `end_time` datetime NOT NULL,
+  `start_time` bigint NOT NULL,
+  `end_time` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `schedule_id` (`schedule_id`),
   KEY `attraction_id` (`attraction_id`),
@@ -50,7 +51,7 @@ DROP TABLE IF EXISTS `schedules`;
 CREATE TABLE `schedules` (
   `schedule_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `name` varchar(30) NOT NULL DEFAULT '이름 없는 스케줄',
+  `name` varchar(30),
   PRIMARY KEY (`schedule_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `schedules_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
@@ -76,3 +77,4 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES ('root',_binary '$2b$10$P.oH.j0fy16XmMBVNvMa2eBVNCNigsYh9BGbT7HUps5ckl.SQtUHO','GM',9,1),('test3',_binary '$2b$10$QwrtGr60wZV0xb3ryqMac.XJdE32IeqaDBzgtJYziyvCu7XHxi6.y','TEST_3',1,2);
 UNLOCK TABLES;
+SET foreign_key_checks = 1;

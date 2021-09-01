@@ -10,6 +10,7 @@ import userApi from "./routers/userApi";
 import placeApi from "./routers/placeApi";
 import { imageStorePath, imageRoutingPath } from "./controllers/image";
 import attractionApi from "./routers/attractionApi";
+import scheduleApi from "./routers/scheduleApi";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/", indexRouter);
 app.use("/", userApi);
 app.use("/place", placeApi);
 app.use("/attraction", attractionApi);
+app.use("/schedule", scheduleApi);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
