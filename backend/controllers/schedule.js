@@ -181,18 +181,12 @@ export const updateSchedule = async (req, res) => {
         failMsg = deleteEvents.length
           ? null
           : "must contains at least 1 element";
-        for (const eventId of deleteEvents) {
-          if (typeof eventId !== "string") {
-            failMsg = "element must be string";
-            break;
-          }
-        }
-        if (failMsg) {
-          res
-            .status(400)
-            .json({ msg: `Unvalid Arguments 'deleteEvents' : ${failMsg}` });
-          return;
-        }
+      }
+      if (failMsg) {
+        res
+          .status(400)
+          .json({ msg: `Unvalid Arguments 'deleteEvents' : ${failMsg}` });
+        return;
       }
     }
     if (!filteredName && !insertEvents && !deleteEvents) {
