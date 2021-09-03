@@ -1,6 +1,11 @@
 import express from "express";
 import { auth, checkAuth } from "../auth";
-import { getSchedules, postSchedule } from "../controllers/schedule";
+import {
+  deleteSchedule,
+  getSchedules,
+  updateSchedule,
+  uploadSchedule,
+} from "../controllers/schedule";
 const scheduleApi = express.Router();
 
 //auth : no
@@ -11,6 +16,8 @@ scheduleApi.use("/", auth);
 //auth : required(level 1)
 scheduleApi.use("/", checkAuth(1));
 scheduleApi.get("/", getSchedules);
-scheduleApi.post("/", postSchedule);
+scheduleApi.post("/upload", uploadSchedule);
+scheduleApi.post("/update/:scheduleId", updateSchedule);
+scheduleApi.delete("/:scheduleId", deleteSchedule);
 
 export default scheduleApi;

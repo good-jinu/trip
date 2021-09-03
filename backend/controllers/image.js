@@ -43,3 +43,11 @@ export const removeImage = (file) => {
     console.log(`Failed to removeFile : ${filename}\nerror : ${err}`);
   }
 };
+
+export const convertFullPath = (arr, keyname) => {
+  const length = arr.length;
+  for (let i = 0; i < length; ++i) {
+    const filename = arr[i][keyname] ? arr[i][keyname] : defaultImageName;
+    arr[i][keyname] = join(imageRoutingPath, filename);
+  }
+};

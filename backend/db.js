@@ -18,17 +18,10 @@ export const pool = nonPromisePool.promise();
 //init refresh_token table
 (async () => {
   const conn = await pool.getConnection();
-  const q0 = "SET time_zone = '+00:00';";
-  const q1 = "DROP TABLE IF EXISTS tokens;";
-  const q2 = `CREATE TABLE tokens (
-    tid CHAR(21) NOT NULL PRIMARY KEY,
-    user_id INT NOT NULL,
-    block TINYINT(1) DEFAULT 0,
-    exp DATETIME NOT NULL
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
+  const q0 = "SET time_zone = '+00:00'";
+  const q1 = "DELETE FROM tokens";
   conn.execute(q0);
   await conn.execute(q1);
-  await conn.execute(q2);
   conn.release();
   //테스트용으로 5분마다 작동(추후 2시간 간격으로 늘릴것)
   setInterval(checkTokens, 5 * 1 * 60 * 1000);
@@ -38,10 +31,10 @@ export const pool = nonPromisePool.promise();
 export const checkTokens = async () => {
   console.log("run checkTokens()...");
   const conn = await pool.getConnection();
-  const q1 = "DELETE FROM tokens WHERE exp < now();";
+  const q1 = "DELETE FROM tokens WHERE exp < now()";
   await conn.execute(q1);
   //FOR DEBUG
-  const [rows] = await conn.execute("SELECT * FROM tokens;");
+  const [rows] = await conn.execute("SELECT * FROM tokens");
   console.log(rows);
   conn.release();
 };

@@ -1,4 +1,5 @@
 SET foreign_key_checks = 0;
+
 DROP TABLE IF EXISTS `attractions`;
 CREATE TABLE `attractions` (
   `attraction_id` int NOT NULL AUTO_INCREMENT,
@@ -35,8 +36,8 @@ CREATE TABLE `schedule_events` (
   `id` int NOT NULL AUTO_INCREMENT,
   `schedule_id` int NOT NULL,
   `attraction_id` int NOT NULL,
-  `start_time` bigint NOT NULL,
-  `end_time` bigint NOT NULL,
+  `start_time` int NOT NULL,
+  `end_time` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `schedule_id` (`schedule_id`),
   KEY `attraction_id` (`attraction_id`),
@@ -75,6 +76,15 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 LOCK TABLES `users` WRITE;
-INSERT INTO `users` VALUES ('root',_binary '$2b$10$P.oH.j0fy16XmMBVNvMa2eBVNCNigsYh9BGbT7HUps5ckl.SQtUHO','GM',9,1),('test3',_binary '$2b$10$QwrtGr60wZV0xb3ryqMac.XJdE32IeqaDBzgtJYziyvCu7XHxi6.y','TEST_3',1,2);
+INSERT INTO `users` VALUES ('root',_binary '$2b$10$P.oH.j0fy16XmMBVNvMa2eBVNCNigsYh9BGbT7HUps5ckl.SQtUHO','GM',9,1);
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS tokens;
+CREATE TABLE tokens (
+  tid CHAR(21) NOT NULL PRIMARY KEY,
+  user_id INT NOT NULL,
+  block TINYINT(1) DEFAULT 0,
+  exp DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 SET foreign_key_checks = 1;

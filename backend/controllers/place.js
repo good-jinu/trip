@@ -1,6 +1,5 @@
 import { pool } from "../db";
-import { defaultImageName, imageRoutingPath, removeImage } from "./image";
-import { join } from "path";
+import { convertFullPath, removeImage } from "./image";
 
 export const search = async (req, res) => {
   try {
@@ -10,11 +9,7 @@ export const search = async (req, res) => {
     return;
   }
   try {
-    const length = rows.length;
-    for (let i = 0; i < length; ++i) {
-      const filename = rows[i].imageSrc ? rows[i].imageSrc : defaultImageName;
-      rows[i].imageSrc = join(imageRoutingPath, filename);
-    }
+    convertFullPath(rows, "imageSrc");
     res.status(200).json(rows);
   } catch (err) {
     console.log(err);
@@ -32,7 +27,7 @@ export const getPlaceByName = async (req, res, next) => {
 
 export const getPlaceList = async (req, res, next) => {
   let { page } = req.query;
-  page = !page ? 1 : page * 1;
+  page = !page ? 1 : Number(page);
   if (isNaN(page)) {
     res.status(400).send();
     return;
